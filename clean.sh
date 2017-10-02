@@ -1,0 +1,2 @@
+rm obuild/*.o
+rm *~
