@@ -2,17 +2,13 @@
 
 // @NOTE: M-% query-replace
 // @NOTE: M-z zap to char
-// @NOTE: C-u s --group-directories-first
 // @NOTE: dired g refresh buffer
-// @NOTE: C-SPC toggle maximize window
-// @NOTE: SUPER-DIRECTION moves windows
 // @NOTE: the new negative compliant writef hasn't been tested much yet.
 // @NOTE: buf-move
 // @NOTE: goto line M-g g
 
 // @TODO: make writef more printf compliant. althought printf doesn't print binary for some reason.
 // @TODO: log writef
-// @TODO: ASSERT
 
 int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 	
@@ -20,10 +16,7 @@ int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 	
 	enable_serial();
 	
-	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-		writef("Invalid magic passed from bootloader!\n");
-		return -1;
-	}
+	ASSERT(magic == MULTIBOOT_BOOTLOADER_MAGIC);
 	
 	install_gdt();
 	install_idt();

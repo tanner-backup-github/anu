@@ -15,12 +15,25 @@ typedef struct {
 	uint32_t eip, cs, eflags, useresp, ss;
 } Registers;
 
-#define __ASSERT(b, file, line, func) if (!(b)) { \
-        writef("Assertion failed in file %s on line %d in function %s.\n", file, line, func); \
-}
-#define ASSERT(b) __ASSERT(b, __FILE__, __LINE__, __FUNCTION__);
-// @TODO: Finish PANIC() with writef support
-#define PANIC()
+extern void hang();
+
+#define __ASSERT(b, file, func, line) do { if (!(b)) {			\
+		writef("Assertion failed in file %s in function %s on line %d.\n", file, func, line); \
+		hang(); } } while (0);
+#define ASSERT(b) __ASSERT(b, __FILE__, __FUNCTION__, __LINE__);
+
+#define __PANIC(file, func, line) do { writef("Panic in file %s in function %s on line %d.\n", file, func, line); \
+		hang(); } while(0);
+#define PANIC() __PANIC(__FILE__, __FUNCTION__, __LINE__);
+
+#ifdef DEBUG
+#define __LOG(s, file, func, line) do { writef("[Log (%s %s %d)]: %s\n", file, func, line, (s)); } while(0);
+#define LOG(s) __LOG(s, __FILE__, __FUNCTION__, __LINE__);
+#else
+#define __LOG(s, file, func, line)
+#define LOG(s)
+#endif
+
 #define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof(*(arr)))
 #define MIN(x, y) ((x) > (y) ? (y) : (x))
 #define MAX(x, y) ((x) < (y) ? (y) : (x))

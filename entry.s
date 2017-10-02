@@ -19,6 +19,7 @@ entry:
         extern kmain
         call kmain
 
+global hang
 hang:
         cli
         hlt
