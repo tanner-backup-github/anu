@@ -16,13 +16,13 @@ entry:
         push ebx
         push eax
 	
-        extern kernel_main
-        call kernel_main
+        extern kmain
+        call kmain
 
-forever:
+hang:
         cli
         hlt
-        jmp forever
+        jmp hang
 
 section .bss
 align 32

@@ -14,7 +14,7 @@
 // @TODO: log writef
 // @TODO: ASSERT
 
-int32_t kernel_main(uint32_t magic, multiboot_info_t *mboot) {
+int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 	
 	// @TODO: Copy mboot?
 	
