@@ -7,7 +7,6 @@
 
 void *irq_handlers[16] = { NULL };
 
-
 void remap_pic(void) {
 	outb(0x20, 0x11);
 	outb(0xA0, 0x11);
@@ -43,7 +42,7 @@ int32_t timer_ticks = 0;
 
 void timer_handler(Registers *regs) {
 	(void) regs;
-	timer_ticks++;
+	++timer_ticks;
 
 	if (timer_ticks % 18 == 0) {
 		/* writef("TEST"); */

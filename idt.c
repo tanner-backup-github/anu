@@ -1,6 +1,6 @@
 #include <common.h>
 
-/* diagram of IDT entry */
+/* @TODO: diagram of IDT entry */
 
 uint64_t idt[256];
 struct {

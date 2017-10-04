@@ -50,8 +50,6 @@ void isr_handler(Registers *regs) {
 		for (size_t i = 0; i < ARRAY_SIZE(register_names); ++i) {
 			writef("%s: %x\n", register_names[i], *((int32_t *) regs + i));
 		}
-	        while (true) {
-			asm volatile ("hlt");
-		}
+		hang();
 	}
 }

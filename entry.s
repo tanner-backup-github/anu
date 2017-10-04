@@ -12,7 +12,6 @@ global entry
 entry:
         mov esp, stack
 
-	push FLAGS
         push ebx
         push eax
 	

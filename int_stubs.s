@@ -15,38 +15,69 @@ isr%1:
 	jmp isr_common_stub
 %endmacro
 
-; @TODO doc these with their names
+;;  Division By Zero
 ISR_NO_ERRCODE 0
+;; Debug
 ISR_NO_ERRCODE 1
+;; NMI
 ISR_NO_ERRCODE 2
+;; Breakpoint
 ISR_NO_ERRCODE 3
+;; Overflow
 ISR_NO_ERRCODE 4
+;; Bound Range Exceeded
 ISR_NO_ERRCODE 5
+;; Invalid Opcode
 ISR_NO_ERRCODE 6
+;; Device Not Available
 ISR_NO_ERRCODE 7
+;; Double Fault
 ISR_ERRCODE    8
+;; Coprocessor Segment Overrun
 ISR_NO_ERRCODE 9
+;; Invalid TSS
 ISR_ERRCODE    10
+;; Segment Not Present
 ISR_ERRCODE    11
+;; General Protection Fault
 ISR_ERRCODE    12
+;; Stack-Segment Fault
 ISR_ERRCODE    13
+;; Page Fault
 ISR_ERRCODE    14
+;; Reserved
 ISR_NO_ERRCODE 15
+;; x87 Floating-Point
 ISR_NO_ERRCODE 16
+;; Alignment Check
 ISR_ERRCODE    17
+;; Machine Check
 ISR_NO_ERRCODE 18
+;; SIMD Floating-Point
 ISR_NO_ERRCODE 19
+;; Virtualization
 ISR_NO_ERRCODE 20
+;; Reserved	
 ISR_NO_ERRCODE 21
+;; Reserved
 ISR_NO_ERRCODE 22
+;; Reserved
 ISR_NO_ERRCODE 23
+;; Reserved
 ISR_NO_ERRCODE 24
+;; Reserved
 ISR_NO_ERRCODE 25
+;; Reserved	
 ISR_NO_ERRCODE 26
+;; Reserved
 ISR_NO_ERRCODE 27
+;; Reserved
 ISR_NO_ERRCODE 28
+;; Reserved
 ISR_NO_ERRCODE 29
+;; Security
 ISR_ERRCODE 30
+;; Reserved
 ISR_NO_ERRCODE 31
 
 ; @TODO: doc

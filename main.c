@@ -22,7 +22,7 @@ int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 	install_idt();
 	install_irqs();
         memory_xxx(mboot);
-	
+
 	// @TODO: I can still have interrupts without this? Figure out why.
 	// @TODO: When is the exact right time to enable this?
 	asm volatile ("sti");
@@ -31,7 +31,7 @@ int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 	
 	/* @TODO: Think about how to seperate interrupt stuff for software, hardware,
 	   and exception interrupts? Think about other source tree architectures? */
-
+	
 	while (true) {
 		asm volatile ("hlt");
 	}

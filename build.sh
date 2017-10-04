@@ -1,3 +1,4 @@
+clear
 BASE=~/Desktop/anu/
 
 cd "$BASE"

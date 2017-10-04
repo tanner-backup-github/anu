@@ -3,7 +3,7 @@
 // @TODO: Modularize this for toggling serial and VGA? Arch?
 
 void write_string(const char *s) {
-	for (size_t i = 0; s[i] != '\0'; i++) {
+	for (size_t i = 0; s[i] != '\0'; ++i) {
 		write_serial(s[i]);
 	}
 }
@@ -12,11 +12,11 @@ void write_uint(uint64_t n, int8_t base) {
 	uint64_t n_copy = n;
 	int8_t digits = 0;
 	do {
-		digits++;
+		++digits;
 	} while (n_copy /= base);
 	char buf[64] = { 0 };
 	do {
-		digits--;
+		--digits;
 		buf[digits] = "0123456789abcdef"[n % base];
 	} while (n /= base);
 	write_string(buf);
@@ -28,14 +28,14 @@ void write_int(int64_t n, int8_t base) {
 	if (n < 0) {
 		n *= -1;
 		buf[0] = '-';
-		digits++;
+		++digits;
 	}
 	int64_t n_copy = n;
 	do {
-		digits++;
+		++digits;
 	} while (n_copy /= base);
 	do {
-		digits--;
+		--digits;
 		buf[digits] = "0123456789abcdef"[n % base];
 	} while (n /= base);
 	write_string(buf);
@@ -46,7 +46,7 @@ void writef(const char *fmt, ...) {
 	va_start(vl, fmt);
 
 	size_t fmt_length = strlen(fmt);
-	for (size_t i = 0; i < fmt_length; i++) {
+	for (size_t i = 0; i < fmt_length; ++i) {
 		char c = fmt[i];
 		if (c == '%' && i + 1 < fmt_length) {
 			size_t fmt_char = fmt[i + 1];
@@ -82,7 +82,7 @@ void writef(const char *fmt, ...) {
 				write_serial('%');
 				break;
 			}
-			i++;
+			++i;
 		} else {
 			write_serial(c);
 		}

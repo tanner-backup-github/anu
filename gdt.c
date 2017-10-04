@@ -41,8 +41,8 @@ extern void flush_gdt(void);
 void set_gdt_entry(size_t i, uint32_t offset, uint32_t size, uint8_t access_flags, uint8_t size_flags) {
 	gdt[i] =  size & 0xffff;
 	gdt[i] |= (offset & 0xffff) << 16;
-	gdt[i] |= (uint64_t) (offset >> 16 & 0xff) << 32;
-	gdt[i] |= (uint64_t) (size >> 16 & 0b1111) << 48;
+	gdt[i] |= (uint64_t) ((offset >> 16) & 0xff) << 32;
+	gdt[i] |= (uint64_t) ((size >> 16) & 0b1111) << 48;
 	
 	gdt[i] |= (uint64_t) access_flags << 40;
 	gdt[i] |= (uint64_t) size_flags << 52;
