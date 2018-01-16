@@ -20,13 +20,14 @@ int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 	install_gdt();
 	install_idt();
 	install_irqs();
-	memory_xxx(mboot);
+	init_free_memory(mboot);
 
 	// @NOTE: I do need this, but why?
 	asm volatile("sti");
+	/* asm volatile("int $0x50"); */
 
 	writef("Entering loop...\n");
-	
+
 	/* @TODO: Think about how to seperate interrupt stuff for software,
 	   hardware,
 	   and exception interrupts? Think about other source tree

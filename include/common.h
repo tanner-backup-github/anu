@@ -65,6 +65,7 @@ void writef(const char *fmt, ...);
 
 // string.c
 size_t strlen(const char *s);
+void memset(const void *b, uint8_t c, size_t n);
 
 #define DATA_SELECTOR 0x08
 
@@ -93,4 +94,4 @@ void set_idt_entry(size_t i, uint32_t offset, uint16_t selector, uint8_t flags);
 void install_irqs(void);
 
 // memory.c
-void memory_xxx(multiboot_info_t *mboot);
+void init_free_memory(multiboot_info_t *mboot);

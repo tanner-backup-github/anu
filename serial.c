@@ -1,33 +1,64 @@
 #include <common.h>
 
-#define PORT 0x3f8
+// https://www.lammertbies.nl/comm/info/serial-uart.html
+// http://wiki.osdev.org/Serial_Ports
+// https://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming
 
-// DOC & READ SERIAL OPTIONS
-// Better names for received_serial_data and transmit_empty
+#define COM1_PORT 0x3f8
+#define DIVISOR_LATCH_LSB (COM_PORT + 0)
+#define DIVISOR_LATCH_MSB (COM_PORT + 1)
+#define INT_ENABLE (COM1_PORT + 1)
+#define FIFO_CONTRTOL (COM1_PORT + 2)
+#define LINE_CONTROL (COM1_PORT + 3)
+#define MODEM_CONTROL (COM1_PORT + 4)
+#define LINE_STATUS (COM1_PORT + 5)
+
+#define DATA_AVAILABLE 0b1
+#define STATUS_CHANGE 0b100000
+
+// @NOTE: Divisor Latch Value = 115200 / BaudRate
 
 void enable_serial(void) {
-	outb(PORT + 1, 0x00); // Disable all interrupts
-	outb(PORT + 3, 0x80); // Enable DLAB (set baud rate divisor)
-	outb(PORT + 0, 0x03); // Set divisor to 3 (lo byte) 38400 baud (hi byte)
-	outb(PORT + 1, 0x00); // (hi byte)
-	outb(PORT + 3, 0x03); // 8 bits, no parity, one stop bit
-	outb(PORT + 2, 0xc7); // enable fifo, clear them, with 14-byte threshold
-	outb(PORT + 4, 0x0b); // IRQs enabled, RTS/DSR set
+	// Disable all interrupts
+	outb(INT_ENABLE, 0);
+
+	// Enable DLAB (set baud rate divisor)
+	outb(LINE_CONTROL, 0x80);
+
+	// Set divisor to 3 (low byte)
+	// Set high byte to 0
+	// BaudRate = 38400
+	// https://www.lammertbies.nl/comm/info/serial-uart.html#DLX
+	outb(DIVISOR_LATCH_LSB, 3);
+	outb(DIVIS_RLATCH_MSB, 0);
+
+	// 8 bits (0b11), no parity bit (bit 3-5 of 0b000011), one stop bit (bit
+	// two of 0b000011)
+	outb(LINE_CONTROL, 0b000011);
+
+	// enable FIFO (bit 0), clear rx/tx FIFOs (bit 1&2), with 14-byte(bit
+	// 6&7) threshold
+	outb(FIFO_CONTRTOL, 0b11000111);
+
+	// IRQs enabled (IRQ4), RTS (Request To Send: RTS / CTS (Clear To Send)
+	// handshake) / DSR (Data Set Ready: I'm
+	// ready to communicate) set
+	outb(MODEM_CONTROL, 0b1011);
 }
 
-bool received_serial_data(void) { return inb(PORT + 5) & 1; }
+bool received_serial_data(void) { return inb(LINE_STATUS) & DATA_AVAILABLE; }
 
 uint8_t read_serial(void) {
 	while (received_serial_data() == false) {
 	}
-	return inb(PORT);
+	return inb(COM1_PORT);
 }
 
-bool transmit_empty(void) { return inb(PORT + 5) & 0x20; }
+bool transmit_empty(void) { return inb(LINE_STATUS) & STATUS_CHANGE; }
 
 void write_serial(uint8_t b) {
 	while (transmit_empty() == false) {
 	}
 
-	outb(PORT, b);
+	outb(COM1_PORT, b);
 }

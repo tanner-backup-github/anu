@@ -81,7 +81,6 @@ void set_gdt_entry(size_t i, uint32_t offset, uint32_t size,
 }
 
 void install_gdt(void) {
-
 	// @NOTE: The null descriptor is never referenced by the processor.
 	// Needed for certain emulators.
 	set_gdt_entry(0, 0, 0, 0, 0);

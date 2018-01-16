@@ -50,5 +50,7 @@ void isr_handler(registers *regs) {
 			       *((int32_t *)regs + i));
 		}
 		hang();
+	} else {
+		writef("TEST\n");
 	}
 }

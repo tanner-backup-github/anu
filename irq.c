@@ -102,7 +102,8 @@ void install_irqs(void) {
 	set_idt_entry(45, (uint32_t)irq13, DATA_SELECTOR, INT_GATE_FLAGS);
 	set_idt_entry(46, (uint32_t)irq14, DATA_SELECTOR, INT_GATE_FLAGS);
 	set_idt_entry(47, (uint32_t)irq15, DATA_SELECTOR, INT_GATE_FLAGS);
-
+	/* set_idt_entry(0x50, (uint32_t)test, DATA_SELECTOR, INT_GATE_FLAGS); */
+	
         irq_routines[0] = timer_handler;
 	irq_routines[1] = keyboard_handler;
 }

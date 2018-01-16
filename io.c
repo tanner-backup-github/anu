@@ -6,20 +6,6 @@ void write_string(const char *s) {
 	}
 }
 
-void write_uint(uint64_t n, int8_t base) {
-	uint64_t n_copy = n;
-	int8_t digits = 0;
-	do {
-		++digits;
-	} while (n_copy /= base);
-	char buf[64] = {0};
-	do {
-		--digits;
-		buf[digits] = "0123456789abcdef"[n % base];
-	} while (n /= base);
-	write_string(buf);
-}
-
 void write_int(int64_t n, int8_t base) {
 	char buf[64] = {0};
 	int8_t digits = 0;
@@ -32,6 +18,20 @@ void write_int(int64_t n, int8_t base) {
 	do {
 		++digits;
 	} while (n_copy /= base);
+	do {
+		--digits;
+		buf[digits] = "0123456789abcdef"[n % base];
+	} while (n /= base);
+	write_string(buf);
+}
+
+void write_uint(uint64_t n, int8_t base) {
+	uint64_t n_copy = n;
+	int8_t digits = 0;
+	do {
+		++digits;
+	} while (n_copy /= base);
+	char buf[64] = {0};
 	do {
 		--digits;
 		buf[digits] = "0123456789abcdef"[n % base];

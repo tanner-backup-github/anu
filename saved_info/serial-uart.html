@@ -1,0 +1,1142 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
+<base href="https://www.lammertbies.nl/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<link rel="alternate" hreflang="en" href="https://www.lammertbies.nl/comm/info/serial-uart.html" />
+
+<link rel="alternate" hreflang="nl" href="https://www.lammertbies.nl/comm/info/nl_serial-uart.html" />
+
+
+
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+
+
+
+<meta name="robots"      content="index,follow,noarchive">
+<meta name="author"      content="Lammert Bies © 1997-2017">
+
+<meta name="description" content="The serial UART. Detailed information about the use and programming of UARTs for serial communications.">
+
+<title>Serial UART, an in depth tutorial</title>
+<style type="text/css">
+<!--
+html,body{height:100%}
+body{padding:0;margin:0;text-align:left}
+body,td,th,a,h1,h2,h3,caption,.rtxt,.ltxt{font-family:Verdana,Arial,Helvetica,sans-serif}
+body,p,td{font-weight:normal;color:#000;text-decoration:none}
+th{font-weight:bold}
+a{color:#039;text-decoration:underline}
+a:hover,a:active{color:#09F}
+h1,h2,h3,.tabh1,.tabh2,.tabh3,h1 a, h2 a, h3 a{color:#039;text-decoration:none}
+h1,.tabh1{font-size:15pt;font-weight:normal;line-height:125%}
+h2,.tabh2{font-size:12.5pt;font-weight:bold}
+h3,.tabh3{font-size:11pt;font-weight:bold}
+caption,.caption{font-size:9pt;font-weight:bold;padding-bottom:0.6em;}
+.osup,.osub{font-size:6pt}
+sup{position:relative;bottom:0.5em;vertical-align:baseline}
+#leftimg,.ltxt{float:left}
+#rightimg,.rimg,.rtxt{float:right}
+.rtxt,.ltxt{background:#000;height:25px;color:#FF0;font-weight:bold;font-size:13px;line-height:25px}
+.rtxt a,.ltxt a{text-decoration:none;color:#FFF}
+.headline{background:#000;border:0;width:100%;margin-top:10px;overflow:auto}
+.content{padding:0 15px 15px 15px;text-align:left;vertical-align:top;font:80%/125% Verdana,Arial,Helvetica,sans-serif;overflow-y:hidden}
+.leftmenu{width:160px;text-align:center;vertical-align:top;float:left;margin-bottom:-99999px;padding-bottom:99999px;overflow-y:hidden}
+.leftmenu{background:#DDD;padding-top:10px}
+.qlinkhead,.qlink{font: 9pt Arial,Verdana,Helvetica,sans-serif;white-space:nowrap;text-align:left;padding:5px 10px 5px 10px}
+.qlink a{text-decoration:none}
+.qlinkbutton{font-size:8pt;color:#F00;padding:5px}
+dt{padding-bottom:3pt;font-weight:bold}
+dd{padding-bottom:6pt}
+.news{font-weight:normal}
+.autoscale{height:auto;max-width:100%}
+.googleadd{float:right;margin:0 0 6px 6px;height:280px;width:336px}
+.googleaddleft{float:left;margin:0 20px 20px 0;height:280px;width:336px}
+.googletopnew{float:right;margin:10px 0 6px 6px;width:336px}
+#googlefoot{height:60px;width:468px}
+#googleexit{height:15px;width:728px;margin-top:30px;margin-bottom:55px}
+#googlefooterlow{height:90px;width:728px;margin-top:30px;margin-bottom:55px}
+#googlefooterhigh{height:90px;width:728px;margin-top:30px;margin-bottom:55px}
+#googletopexit{margin-top:30px;margin-bottom:30px;clear:both}
+#googleshort{height:240px;width:120px;margin-top:30px;margin-bottom:20px}
+#googlelong{height:600px;width:120px;margin-top:30px;margin-bottom:20px}
+#googleblong{height:600px;width:160px;margin-top:10px;margin-bottom:20px}
+.newgoogleheader{margin-top:10px;display:none}
+#googlesearch{padding:0;white-space:nowrap;border:0;position:absolute;left:15px;top:10px}
+.newgoogleexit{padding:0 0 15px 0;overflow:auto}
+.googleleft{height:600px;width:160px}
+table.pinout{border:1px solid #369;margin:3px;border-collapse:collapse}
+.pinout td{padding:2pt 10pt 2pt 10pt;font-size:10pt}
+.pinout th{padding:2pt 10pt 4pt 10pt;font-size:10pt;background:#369;color:#fff}
+.tabdiv {margin-left:auto;margin-right:auto}
+.tabdiv {text-align:center}
+.tabdiv img {border:0;border-collapse:collapse;margin:0px 10px 0px 10px}
+.centab {display:inline-block}
+.leftcol {float:left;margin-left:auto;margin-right:auto;display:inline-block;text-align:center}
+.rightcol {float:none;margin-left:auto;margin-right:auto;display:inline-block;text-align:center}
+td.arrow,th.arrow{padding:0;vertical-align:middle;}
+.even,.odd{vertical-align:baseline}
+.even{background:#fff}
+.odd{background:#eee}
+.literature{clear:both}
+.literature td{font-size:10pt}
+.ltext{text-align:left}
+.full{border:0;width:100%;height:100%;border-collapse:collapse}
+.contentwrap{overflow:hidden}
+.twocols td{font-size:10pt}
+.footerline{font:8pt Arial,Verdana,Helvetica,sans-serif;width:100%;overflow:auto;color:#FFF;background:#369;vertical-align:middle;text-decoration:none;white-space:nowrap;margin-bottom:15px}
+.footerline a{font-family:Arial,Verdana,Helvetica,sans-serif;color:#FFF;background:#369;text-decoration:none}
+.footerline a:hover{color:#000;text-decoration:underline}
+.footerline a:active{color:#000}
+.leftfooter {float:left;vertical-align:middle;line-height:20px;height:20px}
+.rightfooter {float:right;vertical-align:middle;line-height:20px;height:20px}
+.like {float:left;margin-right:30px}
+.kwoot{background:none #fff;border:2px solid #777;clear:both;color:#000;margin-left:auto;margin-right:auto;padding:0.35em 0.5em;margin-top:15px}
+.kw_text{text-align:left;font-size:8pt;padding-bottom:0.45em}
+.kw_auth{text-align:right;font-size:7pt}
+.nowrap{white-space:nowrap}
+.red{color:red;font-weight:bold}
+blockquote{border:1px solid #000;margin:15px;padding:15px}
+.blue{color:blue;font-weight:bold}
+@media (min-width:1000px) { .googleleft,.leftmenu{width:300px} }
+@media (max-width:600px) { .googletopnew{display:none} }
+@media (max-width:820px) {
+	.googleleft{display:none}
+	.newgoogleheader{display:block}
+	.leftmenu{float:none;width:100%;margin-bottom:0;padding-bottom:0}
+	.qlink{float:left}
+	.qlinkbutton{display:none}
+	.qlinkhead{display:none}
+}
+pre{font-size:9pt;color:#066;white-space:pre-wrap;white-space:-moz-pre-wrap !important;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;}
+div#___plusone_0 { vertical-align: bottom !important; }
+-->
+</style>
+<style type="text/css" media="print">
+<!--
+.likes,.delicious,.googleadd,#googletopexit,#googlesearch,#googleexit,#googlefoot,.leftmenu,.kwoot,#menuLayer{display:none}
+#maintitle{font-size:12pt;font-weight:bold}
+-->
+</style>
+
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="full">
+
+<div class="newgoogleheader">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-5192891647196130"
+     data-ad-slot="3245513353"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script></div>
+
+
+<div class="headline">
+<div class="ltxt">
+&nbsp;
+&nbsp;<a href="/">Lammert Bies</a>&nbsp; &nbsp;
+&nbsp;<a href="/comm/">Interfacing</a>&nbsp; &nbsp;
+&nbsp;<a href="/sitemap.html">Sitemap</a>&nbsp; &nbsp;
+&nbsp;<a href="/forum/index.php">Forum</a>&nbsp;
+</div>
+
+<div class="rtxt">
+&nbsp;<span title="English">EN</span>&nbsp;
+&nbsp;<a href="/comm/info/nl_serial-uart.html" title="Nederlands">NL</a>&nbsp;
+
+&nbsp;
+</div>
+
+</div>
+<div style="clear:both;"></div>
+<div class="contentwrap">
+<div class="leftmenu">
+<div class="qlinkhead"><b>Quick links</b></div>
+
+
+
+
+
+
+
+
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/info/RS-232_specs.html">RS-232 specs</a></div>
+
+
+
+
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/info/RS-232_io.html">I/O and IRQ's</a></div>
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/info/RS-232_flow_control.html">Flow control</a></div>
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/info/RS-232_null_modem.html">Which null modem?</a></div>
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/info/crc-calculation.html">On-line CRC</a></div>
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/cable/RS-232.html">RS-232 cables</a></div>
+
+
+
+
+
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/cable/RS-232-spy-monitor.html">Spy cables</a></div>
+
+
+
+
+
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/info/I2C-bus.html">I2C interface</a></div>
+
+
+
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/info/RS-232-usb.html">USB to RS232</a></div>
+
+
+
+
+
+
+
+<div class="qlink"><span class="qlinkbutton">&#8226;</span> <a href="/comm/software/">Software download</a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+
+
+
+<div class="googleleft">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- cable-rs232-left-resp -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-5192891647196130"
+     data-ad-slot="6961397085"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+<div style="clear:both;"></div>
+</div><div class="content">
+
+<div class="googletopnew">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-5192891647196130"
+     data-ad-slot="2639008699"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+
+
+<h1>Serial UART information</h1>
+
+<ul>
+<li><a href='/comm/info/serial-uart.html#intr' >Serial UART, an introduction</a>
+<li><a href='/comm/info/serial-uart.html#type' >Serial UART types</a>
+<li><a href='/comm/info/serial-uart.html#regs' >Registers</a>
+</ul>
+
+<h2 id="intr">Serial UART, an introduction</h2>
+
+A UART, universal asynchronous receiver / transmitter is responsible for
+performing the main task in serial communications with computers. The device
+changes incomming parallel information to serial data which can be sent
+on a communication line. A second UART can be used to receive the information.
+The UART performs all the tasks, timing, parity checking, etc. needed for
+the communication. The only extra devices attached are line driver chips
+capable of transforming the TTL level signals to line voltages and vice versa.
+
+<p>
+
+To use the UART in different environments, registers are accessible to
+set or review the communication parameters. Setable parameters are for
+example the communication speed, the type of parity check, and
+the way incomming information is signalled to the running software.
+
+
+<p><div id="googletopexit">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- cable-rs232-topexit-resp -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-5192891647196130"
+     data-ad-slot="3219918037"
+     data-ad-format="link"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+</div>
+
+
+
+<h2 id="type">Serial UART types</h2>
+
+Serial communication on PC compatibles started with the 8250 UART in the
+IBM XT. In the years after, new family members were introduced like the
+8250A and 8250B revisions and the
+16450. The last one was first implemented
+in the AT. The higher bus speed in this computer could not be reached
+by the 8250 series.
+The differences between these first UART series were rather minor.
+The most important property changed with each new release was the 
+maximum allowed speed at the processor bus side. 
+
+<p>
+
+The 16450 was capable of handling a communication speed of 38.4 kbs without
+problems. The demand for higher speeds led to the development of newer
+series which would be able to release the main processor from some of
+its tasks. The main problem with the original series was the need to perform
+a software action for each single byte to transmit or receive. To overcome
+this problem, the 16550 was released which contained two on-board FIFO
+buffers, each capable of storing 16 bytes. One buffer for incomming, and
+one buffer for outgoing bytes.
+
+<p>
+
+A marvellous idea, but it didn't work out that way. The 16550 chip contained
+a firmware bug which made it impossible to use the buffers. The 16550A
+which appeared soon after was the first UART which was able to use its
+FIFO buffers. This made it possible to increase maximum reliable communication
+speeds to 115.2&nbsp;kbs. This speed was necessary to use effectively modems with
+on-board compression. A further enhancment introduced with the 16550
+was the ablity to use DMA, direct memory access for the data transfer.
+Two pins were redefined for this purpose. DMA transfer is not used with
+most applications. Only special serial I/O boards with a high number of
+ports contain sometimes the necessary extra circuitry to make this
+feature work.
+
+<p>
+
+The 16550A is the most common UART at this moment. Newer versions are
+under development, including the 16650 which contains two 32 byte FIFO's
+and on board support for software flow control. Texas Instruments
+is developing the 16750 which contains 64 byte FIFO's.
+
+<H2 id="regs">Registers</H2>
+
+Eight I/O bytes are used for each UART to access its registers.
+The following table shows, where each register can be found. The base
+address used in the table is the lowest I/O port number assigned. The switch
+bit DLAB can be found in the line control register LCR as bit&nbsp;7
+at I/O address base&nbsp;+&nbsp;3.
+
+<p>
+
+<center>
+<table class="pinout">
+<caption>UART register to port conversion table</caption>
+  <tr><th>&nbsp;</th><th colspan="2">DLAB = 0</th><th colspan="2">DLAB = 1</th></tr>
+  <tr><th>I/O port</th><th>Read</th><th>Write</th><th>Read</th><th>Write</th></tr>
+  <tr align="center" class="odd"><td>base</td><td><b>RBR</b><br>receiver<br>buffer</td><td><b>THR</b><br>transmitter<br>holding</td><td colspan="2"><b>DLL</b> divisor latch LSB</td></tr>
+  <tr align="center" class="even"><td>base + 1</td><td><b>IER</b><br>interrupt<br>enable</td><td><b>IER</b><br>interrupt<br>enable</td><td colspan="2"><b>DLM</b> divisor latch MSB</td></tr>
+  <tr align="center" class="odd"><td width="20%">base + 2</td><td width="20%"><b>IIR</b><br>interrupt<br>identification</td><td width="20%"><b>FCR</b><br>FIFO<br>control</td><td width="20%"><b>IIR</b><br>interrupt<br>identification</td><td width="20%"><b>FCR</b><br>FIFO<br>control</td></tr>
+  <tr align="center" class="even"><td>base + 3</td><td colspan="4"><b>LCR</b> line control</td></tr>
+  <tr align="center" class="odd"><td>base + 4</td><td colspan="4"><b>MCR</b> modem control</td></tr>
+  <tr align="center" class="even"><td>base + 5</td><td><b>LSR</b><br>line<br>status</td><td>&ndash;<br>factory<br>test</td><td><b>LSR</b><br>line<br>status</td><td>&ndash;<br>factory<br>test</td></tr>
+  <tr align="center" class="odd"><td>base + 6</td><td><b>MSR</b><br>modem<br>status</td><td>&ndash;<br>not<br>used</td><td><b>MSR</b><br>modem<br>status</td><td>&ndash;<br>not<br>used</td></tr>
+  <tr align="center" class="even"><td>base + 7</td><td colspan="4"><b>SCR</b> scratch</td></tr>
+</table>
+</center>
+
+<p>
+
+<dl>
+<dt>Available registers
+<dd><a href='/comm/info/serial-uart.html#RBR' >RBR, receiver buffer register</a>
+<dd><a href='/comm/info/serial-uart.html#THR' >THR, transmitter holding register</a>
+<dd><a href='/comm/info/serial-uart.html#IER' >IER, interrupt enable register</a>
+<dd><a href='/comm/info/serial-uart.html#IIR' >IIR, interrupt identification register</a>
+<dd><a href='/comm/info/serial-uart.html#FCR' >FCR, FIFO control register</a>
+<dd><a href='/comm/info/serial-uart.html#LCR' >LCR, line control register</a>
+<dd><a href='/comm/info/serial-uart.html#MCR' >MCR, modem control register</a>
+<dd><a href='/comm/info/serial-uart.html#LSR' >LSR, line status register</a>
+<dd><a href='/comm/info/serial-uart.html#MSR' >MSR, modem status register</a>
+<dd><a href='/comm/info/serial-uart.html#SCR' >SCR, scratch register</a>
+<dd><a href='/comm/info/serial-uart.html#DLX' >DLL, divisor latch LSB</a>
+<dd><a href='/comm/info/serial-uart.html#DLX' >DLM, divisor latch MSB</a>
+</dl>
+
+<p>
+
+The communication between the processor and the UART is completely controlled
+by twelve registers. These registers can be read or written to check and
+change the behaviour of the communication device. Each register is
+eight bits wide. On a PC compatible, the registers are accessible in the
+<a href="/comm/info/RS-232_io.html#intr">I/O address area</a>. The function of each
+register will be discussed here in detail.
+
+<H3 id="RBR">RBR : Receiver buffer register (RO)</H3>
+
+The RBR, receiver buffer register contains the byte received if no FIFO is used,
+or the oldest unread byte with FIFO's. If FIFO buffering is used, each new
+read action of the register will return the next byte, until no more
+bytes are present. Bit&nbsp;0 in the LSR line status register can be used to
+check if all received bytes have been read. This bit wil change to zero
+if no more bytes are present.
+
+<H3 id="THR">THR : Transmitter holding register (WO)</H3>
+
+The THR, transmitter holding register is used to buffer outgoing characters.
+If no FIFO buffering is used, only one character can be stored. Otherwise
+the amount of characters depends on the type of UART. Bit&nbsp;5 in the
+LSR, line
+status register can be used to check if new information must be written
+to THR. The value&nbsp;1 indicates that the
+register is empty. If FIFO buffering is used, more than one character
+can be written to the transmitter holding register when the bit signals
+an empty state. There is no indication of the amount of bytes currently
+present in the transmitter FIFO.
+
+<p>
+
+The transmitter holding register is not used to transfer the data directly.
+The byte is first transferred to a shift register where the information
+is broken in single bits which are sent one by one.
+
+<H3 id="IER">IER : Interrupt enable register (R/W)</H3>
+
+The smartest way to perform serial communications on a PC is using
+interrupt driven routines. In that configuration, it is not necessary
+to poll the registers of the UART periodically for state changes. The UART
+will signal each change by generating a processor interrupt. A software
+routine must be present to handle the interrupt and to check what
+state change was responsible for it. 
+
+<p>
+
+Interrupts are not generated, unless the UART is told to do so. This
+is done by setting bits in the
+IER, interrupt enable register. A bit value&nbsp;1
+indicates, that an interrupt may take place.
+
+<p>
+
+<center>
+<table class="pinout">
+<caption>IER : Interrupt enable register</caption>
+  <tr align="center"><th>Bit</th><th>Description</th></tr>
+  <tr class="odd"><td align="center"><b>0</b></td><td align="left">Received data available</td></tr>
+  <tr class="even"><td align="center"><b>1</b></td><td align="left">Transmitter holding register empty</td></tr>
+  <tr class="odd"><td align="center"><b>2</b></td><td align="left">Receiver line status register change</td></tr>
+  <tr class="even"><td align="center"><b>3</b></td><td align="left">Modem status register change</td></tr>
+  <tr class="odd"><td align="center"><b>4</b></td><td align="left">Sleep mode (16750 only)</td></tr>
+  <tr class="even"><td align="center"><b>5</b></td><td align="left">Low power mode (16750 only)</td></tr>
+  <tr class="odd"><td align="center"><b>6</b></td><td align="left">reserved</td></tr>
+  <tr class="even"><td align="center"><b>7</b></td><td align="left">reserved</td></tr>
+</table>
+</center>
+
+<p>
+
+<H3 id="IIR">IIR : Interrupt identification register (RO)</H3>
+
+<p>
+
+A UART is capable of generating a processor interrupt when a state
+change on the communication device occurs. One interrupt signal is used
+to call attention. This means, that additional information is needed
+for the software before the necessary actions can be performed. The
+IIR, interrupt identification register is helpful in this situation. Its
+bits show the current state of the UART and which state change caused
+the interrupt to occur.
+
+<p>
+
+<center>
+<table class="pinout">
+<caption>IIR : Interrupt identification register</caption>
+  <tr align="center"><th>Bit</th><th colspan="6">Value</th><th>Description</th><th>Reset by</th></tr>
+  <tr align="center" class="odd"><td rowspan="2" valign="middle"><b>0</b></td><td colspan="6">0</td><td align="left">Interrupt pending</td><td align="left">&ndash;</td></tr>
+  <tr align="center" class="odd"><td colspan="6">1</td><td align="left">No interrupt pending</td><td align="left">&ndash;</td></tr>
+  <tr align="center" class="even"><td rowspan="6" valign="middle"><b>1,2,3</b></td><td colspan="2"><b>Bit 3</b></td><td colspan="2"><b>Bit 2</b></td><td colspan="2"><b>Bit 1</b></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr align="center" class="even"><td colspan="2">0</td><td colspan="2">0</td><td colspan="2">0</td><td align="left">Modem status change</td><td align="left">MSR read</td></tr>
+  <tr align="center" class="even"><td colspan="2">0</td><td colspan="2">0</td><td colspan="2">1</td><td align="left">Transmitter holding register empty</td><td align="left">IIR read or THR write</td></tr>
+  <tr align="center" class="even"><td colspan="2">0</td><td colspan="2">1</td><td colspan="2">0</td><td align="left">Received data available</td><td align="left">RBR read</td></tr>
+  <tr align="center" class="even"><td colspan="2">0</td><td colspan="2">1</td><td colspan="2">1</td><td align="left">Line status change</td><td align="left">LSR read</td></tr>
+  <tr align="center" class="even"><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">0</td><td align="left">Character timeout (16550)</td><td align="left">RBR read</td></tr>
+  <tr align="center" class="odd"><td valign="middle"><b>4</b></td><td colspan="6">0</td><td align="left">Reserved</td><td align="left">&ndash;</td></tr>
+  <tr align="center" class="even"><td rowspan="2" valign="middle"><b>5</b></td><td colspan="6">0</td><td align="left">Reserved (8250, 16450, 16550)</td><td align="left">&ndash;</td></tr>
+  <tr align="center" class="even"><td colspan="6">1</td><td align="left">64 byte FIFO enabled (16750)</td><td align="left">&ndash;</td></tr>
+  <tr align="center" class="odd"><td rowspan="4" valign="middle"><b>6,7</b></td><td colspan="3"><b>Bit 7</b></td><td colspan="3"><b>Bit 6</b></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr align="center" class="odd"><td colspan="3">0</td><td colspan="3">0</td><td align="left">No FIFO</td><td align="left">&ndash;</td></tr>
+  <tr align="center" class="odd"><td colspan="3">1</td><td colspan="3">0</td><td align="left">Unusable FIFO (16550 only)</td><td align="left">&ndash;</td></tr>
+  <tr align="center" class="odd"><td colspan="3">1</td><td colspan="3">1</td><td align="left">FIFO enabled</td><td align="left">&ndash;</td></tr>
+</table>
+</center>
+
+<p>
+
+<H3 id="FCR">FCR : FIFO control register (WO)</H3>
+
+<p>
+
+The FCR, FIFO control register is present starting with the 16550 series. This
+register controls the behaviour of the FIFO's in the UART. If
+a logical value&nbsp;1 is written to bits&nbsp;1 or&nbsp;2, the function attached is
+triggered. The other bits are used to select a specific FIFO mode.
+
+<p>
+
+<center>
+<table class="pinout">
+<caption>FCR : FIFO control register</caption>
+  <tr align="center"><th>Bit</th><th colspan="2">Value</th><th>Description</th></tr>
+  <tr align="center" class="odd"><td rowspan="2" valign="middle"><b>0</b></td><td colspan="2">0</td><td align="left">Disable FIFO's</td></tr>
+  <tr align="center" class="odd"><td colspan="2">1</td><td align="left">Enable FIFO's</td></tr>
+  <tr align="center" class="even"><td rowspan="2" valign="middle"><b>1</b></td><td colspan="2">0</td><td align="left">&ndash;</td></tr>
+  <tr align="center" class="even"><td colspan="2">1</td><td align="left">Clear receive FIFO</td></tr>
+  <tr align="center" class="odd"><td rowspan="2" valign="middle"><b>2</b></td><td colspan="2">0</td><td align="left">&ndash;</td></tr>
+  <tr align="center" class="odd"><td colspan="2">1</td><td align="left">Clear transmit FIFO</font></td></tr>
+  <tr align="center" class="even"><td rowspan="2" valign="middle"><b>3</b></td><td colspan="2">0</td><td align="left">Select DMA mode 0</td></tr>
+  <tr align="center" class="even"><td colspan="2">1</td><td align="left">Select DMA mode 1</td></tr>
+  <tr align="center" class="odd"><td><b>4</b></td><td colspan="2">0</td><td align="left">Reserved</td></tr>
+  <tr align="center" class="even"><td rowspan="2" valign="middle"><b>5</b></td><td colspan="2">0</td><td align="left">Reserved (8250, 16450, 16550)</td></tr>
+  <tr align="center" class="even"><td colspan="2">1</td><td align="left">Enable 64 byte FIFO (16750)</font></td></tr>
+  <tr align="center" class="odd"><td rowspan="5" valign="middle"><b>6,7</b></td><td><b>Bit 7</b></td><td><b>Bit 6</b></td><td align="left">Receive FIFO interrupt trigger level</td></tr>
+  <tr align="center" class="odd"><td>0</td><td>0</td><td align="left">1 byte</font></td></tr>
+  <tr align="center" class="odd"><td>0</td><td>1</td><td align="left">4 bytes</font></td></tr>
+  <tr align="center" class="odd"><td>1</td><td>0</td><td align="left">8 bytes</font></td></tr>
+  <tr align="center" class="odd"><td>1</td><td>1</td><td align="left">14 bytes</td></tr>
+</table>
+</center>
+
+<p>
+
+<H3 id="LCR">LCR : Line control register (R/W)</H3>
+
+<p>
+
+The LCR, line control register is used at initialisation to set the communication
+parameters. Parity and number of data bits can be changed
+for example. The register also
+controls the accessibility of the DLL and DLM registers. These registers
+are mapped to the same I/O port as the RBR, THR
+and IER registers. Because
+they are only accessed at initialisation when no communication occurs
+this register swapping has no influence on performance.
+
+<p>
+
+<center>
+<table class="pinout">
+<caption>LCR : line control register</caption>
+  <tr align="center"><th>Bit</th><th colspan="6">Value</th><th>Description</th></tr>
+  <tr align="center" class="odd"><td rowspan="5" valign="middle"><b>0,1</b></td><td colspan="3"><b>Bit 1</b></td><td colspan="3"><b>Bit 0</b></td><td align="left">Data word length</td></tr>
+  <tr align="center" class="odd"><td colspan="3">0</td><td colspan="3">0</td><td align="left">5 bits</td></tr>
+  <tr align="center" class="odd"><td colspan="3">0</td><td colspan="3">1</td><td align="left">6 bits</td></tr>
+  <tr align="center" class="odd"><td colspan="3">1</td><td colspan="3">0</td><td align="left">7 bits</td></tr>
+  <tr align="center" class="odd"><td colspan="3">1</td><td colspan="3">1</td><td align="left">8 bits</td></tr>
+  <tr align="center" class="even"><td rowspan="2" valign="middle"><b>2</b></td><td colspan="6">0</td><td align="left">1 stop bit</td></tr>
+  <tr align="center" class="even"><td colspan="6">1</td><td align="left">1.5 stop bits (5 bits word)<br>2 stop bits (6, 7 or 8 bits word)</td></tr>
+  <tr align="center" class="odd"><td rowspan="6" valign="middle"><b>3,4,5</b></td><td colspan="2"><b>Bit 5</b></td><td colspan="2"><b>Bit 4</b></td><td colspan="2"><b>Bit 3</b></th><td>&nbsp;</td></tr>
+  <tr align="center" class="odd"><td colspan="2">x</td><td colspan="2">x</td><td colspan="2">0</td><td align="left">No parity</td></tr>
+  <tr align="center" class="odd"><td colspan="2">0</td><td colspan="2">0</td><td colspan="2">1</td><td align="left">Odd parity</td></tr>
+  <tr align="center" class="odd"><td colspan="2">0</td><td colspan="2">1</td><td colspan="2">1</td><td align="left">Even parity</td></tr>
+  <tr align="center" class="odd"><td colspan="2">1</td><td colspan="2">0</td><td colspan="2">1</td><td align="left">High parity (stick)</td></tr>
+  <tr align="center" class="odd"><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td align="left">Low parity (stick)</td></tr>
+  <tr align="center" class="even"><td rowspan="2" valign="middle"><b>6</b></td><td colspan="6">0</td><td align="left">Break signal disabled</td></tr>
+  <tr align="center" class="even"><td colspan="6">1</td><td align="left">Break signal enabled</td></tr>
+  <tr align="center" class="odd"><td rowspan="2" valign="middle"><b>7</b></td><td colspan="6">0</td><td align="left">DLAB : RBR, THR and IER accessible</td></tr>
+  <tr align="center" class="odd"><td colspan="6">1</td><td align="left">DLAB : DLL and DLM accessible</td></tr>
+</table>
+</center>
+
+<p>
+
+Some remarks about parity:
+
+<p>
+
+The UART is capable of generating a trailing bit at the end of each
+dataword which can be used to check some data distortion.
+Because only one bit is used, the parity system is capable of detecting
+only an odd number of false bits. If an even number of bits has been flipped,
+the error will not be seen.
+
+<p>
+
+When even parity is selected, the UART
+assures that the number of high bit values in the sent or received data
+is always even. Odd parity setting does the opposite. Using stick parity
+has very little use. It sets the parity bit to always&nbsp;1, or always&nbsp;0. 
+
+<p>
+
+Common settings are:
+
+<p>
+
+<ul>
+  <li>8 data bits, one stop bit, no parity
+  <li>7 data bits, one stop bit, even parity
+</ul>
+
+<p>
+
+<H3 id="MCR">MCR : Modem control register (R/W)</H3>
+
+<p>
+
+The MCR, modem control register is used to perform handshaking actions with
+the attached device. In the original UART series including the 16550,
+setting and resetting of the control signals must be done by software.
+The new 16750 is capable of handling flow control automatically, thereby
+reducing the load on the processor.
+
+<p>
+
+<center>
+<table class="pinout">
+<caption>MCR : Modem control register</caption>
+  <tr align="center"><th>Bit</th><th>Description</th></tr>
+  <tr class="odd"><td align="center"><b>0</b></td><td align="left">Data terminal ready</td></tr>
+  <tr class="even"><td align="center"><b>1</b></td><td align="left">Request to send</td></tr>
+  <tr class="odd"><td align="center"><b>2</b></td><td align="left">Auxiliary output 1</td></tr>
+  <tr class="even"><td align="center"><b>3</b></td><td align="left">Auxiliary output 2</td></tr>
+  <tr class="odd"><td align="center"><b>4</b></td><td align="left">Loopback mode</td></tr>
+  <tr class="even"><td align="center"><b>5</b></td><td align="left">Autoflow control (16750 only)</td></tr>
+  <tr class="odd"><td align="center"><b>6</b></td><td align="left">Reserved</td></tr>
+  <tr class="even"><td align="center"><b>7</b></td><td align="left">Reserved</td></tr>
+</table>
+</center>
+
+<p>
+
+The two auxiliary outputs are user definable. Output&nbsp;2 is sometimes used
+in circuitry which controls the interrupt process on a PC. Output&nbsp;1
+is normally not used, however on some I/O cards, it controls the selection
+of a second oscillator working at 4&nbsp;MHz. This is mainly for MIDI purposes.
+
+<p>
+
+<H3 id="LSR">LSR : Line status register (RO)</H3>
+
+<p>
+
+The LSR, line status register shows the current state of communication. Errors
+are reflected in this register. The state of the receive and
+transmit buffers is also available.
+
+<p>
+
+
+<center>
+<table class="pinout">
+<caption>LSR : Line status register</caption>
+  <tr align="center"><th>Bit</th><th>Description</th></tr>
+  <tr class="odd"><td align="center"><b>0</b></td><td align="left">Data available</td></tr>
+  <tr class="even"><td align="center"><b>1</b></td><td align="left">Overrun error</td></tr>
+  <tr class="odd"><td align="center"><b>2</b></td><td align="left">Parity error</td></tr>
+  <tr class="even"><td align="center"><b>3</b></td><td align="left">Framing error</td></tr>
+  <tr class="odd"><td align="center"><b>4</b></td><td align="left">Break signal received</td></tr>
+  <tr class="even"><td align="center"><b>5</b></td><td align="left">THR is empty</td></tr>
+  <tr class="odd"><td align="center"><b>6</b></td><td align="left">THR is empty, and line is idle</td></tr>
+  <tr class="even"><td align="center"><b>7</b></td><td align="left">Errornous data in FIFO</td></tr>
+</table>
+</center>
+
+<p>
+
+Bit&nbsp;5 and&nbsp;6 both show the state of the transmitting cycle. The difference
+is, that bit&nbsp;5 turns high as soon as the transmitter holding register
+is empty whereas bit&nbsp;6 indicates that also the shift register which
+outputs the bits on the line is empty.
+
+<p>
+
+<H3 id="MSR">MSR : Modem status register (RO)</H3>
+
+<p>
+
+The MSR, modem status register contains information about the four incomming
+modem control lines on the device. The information is split in two nibbles.
+The four most siginificant bits contain information about the current
+state of the inputs where the least significant bits are used to indicate
+state changes. The four LSB's are reset, each time the register is read.
+
+<p>
+
+<center>
+<table class="pinout">
+<caption>MSR : Modem status register</caption>
+  <tr align="center"><th>Bit</th><th>Description</th></tr>
+  <tr class="odd"><td align="center"><b>0</b></td><td align="left">change in Clear to send</td></tr>
+  <tr class="even"><td align="center"><b>1</b></td><td align="left">change in Data set ready</td></tr>
+  <tr class="odd"><td align="center"><b>2</b></td><td align="left">trailing edge Ring indicator</td></tr>
+  <tr class="even"><td align="center"><b>3</b></td><td align="left">change in Carrier detect</td></tr>
+  <tr class="odd"><td align="center"><b>4</b></td><td align="left">Clear to send</td></tr>
+  <tr class="even"><td align="center"><b>5</b></td><td align="left">Data set ready</td></tr>
+  <tr class="odd"><td align="center"><b>6</b></td><td align="left">Ring indicator</td></tr>
+  <tr class="even"><td align="center"><b>7</b></td><td align="left">Carrier detect</td></tr>
+</table>
+</center>
+
+<p>
+
+<H3 id="SCR">SCR : Scratch register (R/W)</H3>
+
+<p>
+
+The SCR, scratch register was not present on the 8250
+and 8250B UART.
+It can be used
+to store one byte of information. In practice, it has only limited use.
+The only real use I know of is checking if the UART is a
+8250/8250B,
+or a 8250A/16450 series. Because the 8250
+series are only found in XT's
+even this use of the register is not commonly seen anymore.
+
+<p>
+
+<H3 id="DLX">DLL and DLM : Divisor latch registers (R/W)</H3>
+
+<p>
+
+For generating its timing information, each UART uses an oscillator
+generating a frequency of about 1.8432&nbsp;MHz. This frequency is divided
+by&nbsp;16 to generate the time base for communucation. Because of this
+division, the maximum allowed communication speed is 115200&nbsp;bps. Modern
+UARTS like the 16550 are capable of handling higher input frequencies
+up to 24&nbsp;MHz which makes it possible to communicate with a maximum
+speed of 1.5&nbsp;Mbps. On PC's higher frequencies than the 1.8432&nbsp;MHz are
+rarely seen because this would be software incompatible with the original XT
+configuration.
+
+<p>
+
+This 115200&nbsp;bps communication speed is not suitable for all applications.
+To change
+the communication speed, the frequency can be further decreased by dividing
+it by a programmable value. For very slow communications, this value can
+go beyond&nbsp;255. Therefore, the divisor is stored in two seperate bytes,
+the divisor latch registers
+DLL and DLM which contain the least, and most significant byte.
+
+<p>
+
+For error free communication, it is necessary that both the transmitting
+and receiving UART use the same time base. Default values have been defined
+which are commonly used. The table shows the most common values with
+the appropriate settings of the divisor latch bytes. Note that these
+values only hold for a PC compatible system where a clock frequency
+of 1.8432&nbsp;MHz is used.
+
+<p>
+
+<center>
+<table class="pinout">
+<caption>DLL and DLM : Divisor latch registers</caption>
+  <tr align="center"><th>Speed (bps)</th><th>Divisor</th><th>DLL</th><th>DLM</th></tr>
+  <tr align="center" class="odd"><td align="right"><b>50</b></td><td align="right">2,304</td><td>0x00</td><td>0x09</td></tr>
+  <tr align="center" class="even"><td align="right"><b>300</b></td><td align="right">384</td><td>0x80</td><td>0x01</td></tr>
+  <tr align="center" class="odd"><td align="right"><b>1,200</b></td><td align="right">96</td><td>0x60</td><td>0x00</td></tr>
+  <tr align="center" class="even"><td align="right"><b>2,400</b></td><td align="right">48</td><td>0x30</td><td>0x00</td></tr>
+  <tr align="center" class="odd"><td align="right"><b>4,800</b></td><td align="right">24</td><td>0x18</td><td>0x00</td></tr>
+  <tr align="center" class="even"><td align="right"><b>9,600</b></td><td align="right">12</td><td>0x0C</td><td>0x00</td></tr>
+  <tr align="center" class="odd"><td align="right"><b>19,200</b></td><td align="right">6</td><td>0x06</td><td>0x00</td></tr>
+  <tr align="center" class="even"><td align="right"><b>38,400</b></td><td align="right">3</td><td>0x03</td><td>0x00</td></tr>
+  <tr align="center" class="odd"><td align="right"><b>57,600</b></td><td align="right">2</td><td>0x02</td><td>0x00</td></tr>
+  <tr align="center" class="even"><td align="right"><b>115,200</b></td><td align="right">1</td><td>0x01</td><td>0x00</td></tr>
+</table>
+</center>
+
+<table class="kwoot"><tr><td>
+<div class="kw_text"> If builders built buildings the way programmers wrote programs,<br>then the first woodpecker that came along would destroy civilization.</div>
+<div class="kw_auth">WEINBERG'S SECOND LAW </div>
+</td></tr></table>
+
+
+
+<p><div class="newgoogleexit">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-5192891647196130"
+     data-ad-slot="9757406225"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+</div>
+
+
+</div></div>
+<div class="footerline">
+<div class="leftfooter">&nbsp;&nbsp;Sep. 2017 </div>
+<div class="rightfooter">&nbsp;&nbsp;&nbsp;Copyright &copy; 1997-2017 Lammert Bies, All rights reserved&nbsp;&nbsp;</div>
+</div>
+</div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-295305-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body></html>
+
+
