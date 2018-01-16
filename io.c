@@ -1,7 +1,5 @@
 #include <common.h>
 
-// @TODO: Modularize this for toggling serial and VGA? Arch?
-
 void write_string(const char *s) {
 	for (size_t i = 0; s[i] != '\0'; ++i) {
 		write_serial(s[i]);
@@ -14,7 +12,7 @@ void write_uint(uint64_t n, int8_t base) {
 	do {
 		++digits;
 	} while (n_copy /= base);
-	char buf[64] = { 0 };
+	char buf[64] = {0};
 	do {
 		--digits;
 		buf[digits] = "0123456789abcdef"[n % base];
@@ -23,7 +21,7 @@ void write_uint(uint64_t n, int8_t base) {
 }
 
 void write_int(int64_t n, int8_t base) {
-	char buf[64] = { 0 };
+	char buf[64] = {0};
 	int8_t digits = 0;
 	if (n < 0) {
 		n *= -1;
@@ -62,7 +60,7 @@ void writef(const char *fmt, ...) {
 				break;
 			case 'u':
 				write_uint(va_arg(vl, uint32_t), 10);
-				break;	
+				break;
 			case 'U':
 				write_uint(va_arg(vl, uint64_t), 10);
 				break;

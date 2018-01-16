@@ -2,6 +2,7 @@
 global isr%1
 isr%1:
 	cli
+	; we must push a dummy errcode because one isn't supplied
 	push byte 0
 	push byte %1
 	jmp isr_common_stub
@@ -80,13 +81,18 @@ ISR_ERRCODE 30
 ;; Reserved
 ISR_NO_ERRCODE 31
 
-; @TODO: doc
+extern isr_handler
+; 1. saves processor state
+; 2. sets up kernel mode segments
+; 3. calls isr_handler
+; 4. restores stack frame
 isr_common_stub:
 	pusha
 	push ds
 	push es
 	push fs
 	push gs
+	; can't 'mov' literals directly into segment registers
 	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
@@ -94,7 +100,7 @@ isr_common_stub:
 	mov gs, ax
 	mov eax, esp
 	push eax
-	extern isr_handler
+	; can't directly call 'extern isr_handler'
 	mov eax, isr_handler
 	call eax
 	pop eax
@@ -104,12 +110,14 @@ isr_common_stub:
 	pop ds
 	popa
 	add esp, 8
+	; turns back on interrupts
 	iret
 
 %macro IRQ 2
 global irq%1
 irq%1:
 	cli
+        ; we must push a dummy errcode because one isn't supplied
 	push byte 0
 	push byte %2
 	jmp irq_common_stub
@@ -132,14 +140,18 @@ IRQ 13, 45
 IRQ 14, 46
 IRQ 15, 47
 
-; @TODO: doc
-global irq_common_stub
+extern irq_handler
+; 1. saves processor state
+; 2. sets up kernel mode segments
+; 3. calls isr_handler
+; 4. restores stack frame
 irq_common_stub:
 	pusha
 	push ds
 	push es
 	push fs
 	push gs
+	; can't 'mov' literals directly into segment registers
 	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
@@ -147,7 +159,7 @@ irq_common_stub:
 	mov gs, ax
 	mov eax, esp
 	push eax
-	extern irq_handler
+        ; can't directly call 'extern irq_handler'
 	mov eax, irq_handler
 	call eax
 	pop eax
@@ -157,4 +169,5 @@ irq_common_stub:
 	pop ds
 	popa
 	add esp, 8
+	; turns back on interrupts
 	iret

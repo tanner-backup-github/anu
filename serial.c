@@ -15,20 +15,19 @@ void enable_serial(void) {
 	outb(PORT + 4, 0x0b); // IRQs enabled, RTS/DSR set
 }
 
-bool received_serial_data(void) {
-	return inb(PORT + 5) & 1;
-}
+bool received_serial_data(void) { return inb(PORT + 5) & 1; }
 
 uint8_t read_serial(void) {
-	while (received_serial_data() == false);
+	while (received_serial_data() == false) {
+	}
 	return inb(PORT);
 }
 
-bool transmit_empty(void) {
-	return inb(PORT + 5) & 0x20;
-}
+bool transmit_empty(void) { return inb(PORT + 5) & 0x20; }
 
 void write_serial(uint8_t b) {
-	while (transmit_empty() == false);
+	while (transmit_empty() == false) {
+	}
+
 	outb(PORT, b);
 }

@@ -5,7 +5,7 @@ const char *const isr_exceptions[] = {
 	"Debug",
 	"NMI",
 	"Breakpoint",
-	"Overflow",
+	"Signed Number Overflow",
 	"Bound Range Exceeded",
 	"Invalid Opcode",
 	"Device Not Available",
@@ -36,19 +36,18 @@ const char *const isr_exceptions[] = {
 };
 
 char *register_names[] = {
-	"GS", "FS", "ES", "DS",
-	"EDI", "ESI", "EBP", "ESP", "EBX", "EDX", "ECX", "EAX",
-	"INT_NO", "ERR_CODE",
-	"EIP", "CS", "EFLAGS", "USERESP", "SS",
+	"GS",  "FS",  "ES",     "DS",      "EDI", "ESI",    "EBP",
+	"ESP", "EBX", "EDX",    "ECX",     "EAX", "INT_NO", "ERR_CODE",
+	"EIP", "CS",  "EFLAGS", "USERESP", "SS",
 };
 
-// @TODO: Dump registers?
-void isr_handler(Registers *regs) {
+void isr_handler(registers *regs) {
 	if (regs->int_no < 32) {
 		writef("%s Exception!\nDumping registers and halting.\n",
 		       isr_exceptions[regs->int_no]);
 		for (size_t i = 0; i < ARRAY_SIZE(register_names); ++i) {
-			writef("%s: %x\n", register_names[i], *((int32_t *) regs + i));
+			writef("%s: %x\n", register_names[i],
+			       *((int32_t *)regs + i));
 		}
 		hang();
 	}
