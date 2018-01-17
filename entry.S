@@ -7,6 +7,8 @@ dd MAGIC
 dd FLAGS
 dd CHECKSUM
 
+;; @NOTE: video modes
+	
 section .text
 global entry
 entry:
@@ -25,6 +27,7 @@ hang:
         jmp hang
 
 section .bss
+;; @TODO: doc why 32 bit aligned
 align 32
 resb 8192
 stack:

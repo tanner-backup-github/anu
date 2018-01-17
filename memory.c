@@ -3,16 +3,23 @@
 extern char __kernel_end;
 uintptr_t kernel_end = (uintptr_t)&__kernel_end;
 
+// http://wiki.osdev.org/Memory_Map_(x86)#.22Upper.22_Memory_.28.3E_1_MiB.29
+
 typedef struct {
-	uint64_t start;
-	uint64_t len;
 	uint8_t *pages;
+	size_t pages_len;
+	size_t start;
+	size_t size;
 } memory_region;
 
 memory_region *regions = NULL;
-size_t memory_regions_len = 0;
+size_t regions_len = 0;
 
 #define MEMORY_REGIONS_BUFFER_SIZE (16 * sizeof(memory_region))
+#define PAGE_SIZE 0x1000
+// @NOTE: never gets evaluated
+#define PAGE_FLAG_SIZE ((sizeof(*((memory_region *) NULL)->pages)) * 8)
+#define TEST_BIT(b, x) (((b) >> (x)) & 1)
 
 void init_free_memory(multiboot_info_t *mboot) {
 	ASSERT(mboot->flags & 0b1000000);
@@ -27,24 +34,62 @@ void init_free_memory(multiboot_info_t *mboot) {
 		if (entry->type == MULTIBOOT_MEMORY_AVAILABLE &&
 		    entry->addr + entry->len > kernel_end) {
 			uint64_t start = entry->addr;
-			uint64_t len = entry->len;
+			uint64_t size = entry->len;
+			if (start > UINTPTR_MAX) {
+				break;
+			}
 			if (start < kernel_end) {
-				len -= (kernel_end +
-					MEMORY_REGIONS_BUFFER_SIZE - start);
+				size -= kernel_end +
+					MEMORY_REGIONS_BUFFER_SIZE - start;
 				start = kernel_end + MEMORY_REGIONS_BUFFER_SIZE;
 			}
-			regions[memory_regions_len] =
-				(memory_region){.start = start, .len = len};
-			++memory_regions_len;
+
+			regions[regions_len] =
+				(memory_region){.start = start, .size = size};
+			++regions_len;
 		}
 
 		entry_addr += entry->size + sizeof(entry->size);
 		entry = (multiboot_memory_map_t *)entry_addr;
 	}
 
-	for (size_t i = 0; i < memory_regions_len; ++i) {
-		
-		writef("%X %X\n", regions[i].start, regions[i].len);
+	for (size_t i = 0; i < regions_len; ++i) {
+		// @NOTE: x >> 15 = x / 4096 / 8
+		size_t pages_len = (regions[i].size >> 15) + 1;
+
+		// @TODO!!!: align the 'start' to page sizes
+		regions[i].pages =
+			(uint8_t *)((regions[i].start & (~0xfff)) + PAGE_SIZE);
+		regions[i].pages_len = pages_len;
+		regions[i].start = (uintptr_t)regions[i].pages + pages_len;
+		regions[i].size -=
+			regions[i].start - (uintptr_t)regions[i].pages;
+
+		memset(regions[i].pages, 0, regions[i].pages_len);
+
+		/* writef("Start: %u\nPages Addr: %u\nPages Len: %u\nMemory Size: " */
+		/*        "%u\n", */
+		/*        regions[i].start, regions[i].pages, pages_len, */
+		/*        regions[i].size); */
 	}
-	
+}
+
+// @NOTE: Simple watermark
+void *malloc_page(void) {
+	for (size_t i = 0; i < regions_len; ++i) {
+		for (size_t j = 0; j < regions[i].pages_len; ++j) {
+			for (size_t k = 0; k < PAGE_FLAG_SIZE; ++k) {
+				if (TEST_BIT(regions[i].pages[j], k) == 0) {
+					regions[i].pages[j] |= 1 << k;
+					/* writef("%b %d\n", regions[i].pages[j], k); */
+					return (void *)(regions[i].start +
+							j * PAGE_SIZE +
+							k * PAGE_SIZE);
+				}
+			}
+		}
+	}
+
+	LOG("Out of Memory!\n");
+	return NULL;
 }

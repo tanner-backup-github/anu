@@ -42,7 +42,7 @@ uint64_t timer_ticks = 0;
 void timer_handler(registers *regs) {
 	(void)regs;
 	++timer_ticks;
-
+	
 	// 55 ms of precision (% 18 = one sec boundary)
 	if (timer_ticks % 18 == 0) {
 		writef("TEST\n");

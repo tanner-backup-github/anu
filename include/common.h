@@ -95,3 +95,4 @@ void install_irqs(void);
 
 // memory.c
 void init_free_memory(multiboot_info_t *mboot);
+void *malloc_page(void);

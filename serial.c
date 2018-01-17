@@ -5,8 +5,8 @@
 // https://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming
 
 #define COM1_PORT 0x3f8
-#define DIVISOR_LATCH_LSB (COM_PORT + 0)
-#define DIVISOR_LATCH_MSB (COM_PORT + 1)
+#define DIVISOR_LATCH_LSB (COM1_PORT + 0)
+#define DIVISOR_LATCH_MSB (COM1_PORT + 1)
 #define INT_ENABLE (COM1_PORT + 1)
 #define FIFO_CONTRTOL (COM1_PORT + 2)
 #define LINE_CONTROL (COM1_PORT + 3)
@@ -30,7 +30,7 @@ void enable_serial(void) {
 	// BaudRate = 38400
 	// https://www.lammertbies.nl/comm/info/serial-uart.html#DLX
 	outb(DIVISOR_LATCH_LSB, 3);
-	outb(DIVIS_RLATCH_MSB, 0);
+	outb(DIVISOR_LATCH_MSB, 0);
 
 	// 8 bits (0b11), no parity bit (bit 3-5 of 0b000011), one stop bit (bit
 	// two of 0b000011)
