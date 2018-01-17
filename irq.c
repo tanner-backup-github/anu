@@ -44,8 +44,8 @@ void timer_handler(registers *regs) {
 	++timer_ticks;
 	
 	// 55 ms of precision (% 18 = one sec boundary)
-	if (timer_ticks % 18 == 0) {
-		writef("TEST\n");
+	if (timer_ticks % 36 == 0) {
+		writef("0");
 	}
 }
 

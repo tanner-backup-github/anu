@@ -16,6 +16,7 @@ typedef struct {
 
 extern void hang(void);
 
+// @TODO: varargs
 #define __ASSERT(b, file, func, line)                                          \
 	do {                                                                   \
 		if (!(b)) {                                                    \
@@ -96,4 +97,4 @@ void install_irqs(void);
 
 // memory.c
 void init_free_memory(multiboot_info_t *mboot);
-void *malloc_physical_page(void);
+void *alloc_physical_page(void);

@@ -5,29 +5,19 @@ uintptr_t kernel_end = (uintptr_t)&__kernel_end;
 
 // http://wiki.osdev.org/Memory_Map_(x86)#.22Upper.22_Memory_.28.3E_1_MiB.29
 
-typedef struct {
-	uintptr_t *page_stack;
-	size_t pages_len;
-	size_t start;
-	size_t size;
-} memory_region;
+// @TODO: Check with multiple memory regions (holes)
 
-memory_region *regions = NULL;
-size_t regions_len = 0;
+uintptr_t *page_stack = NULL;
+uintptr_t *page_stack_top = NULL;
 
-#define MEMORY_REGIONS_BUFFER_SIZE (16 * sizeof(memory_region))
 #define PAGE_SIZE 0x1000
-// @NOTE: never gets evaluated
 
 void init_free_memory(multiboot_info_t *mboot) {
 	ASSERT(mboot->flags & 0b1000000);
 
-	regions = (memory_region *)kernel_end;
-	memset(regions, 0, MEMORY_REGIONS_BUFFER_SIZE);
-
 	void *entry_addr = (void *)mboot->mmap_addr;
 	multiboot_memory_map_t *entry = (multiboot_memory_map_t *)entry_addr;
-
+	size_t bytes_for_stack = 0;
 	while ((uintptr_t)entry_addr < mboot->mmap_addr + mboot->mmap_length) {
 		if (entry->type == MULTIBOOT_MEMORY_AVAILABLE &&
 		    entry->addr + entry->len > kernel_end) {
@@ -37,62 +27,65 @@ void init_free_memory(multiboot_info_t *mboot) {
 				break;
 			}
 			if (start < kernel_end) {
-				size -= kernel_end +
-					MEMORY_REGIONS_BUFFER_SIZE - start;
-				start = kernel_end + MEMORY_REGIONS_BUFFER_SIZE;
+				size -= kernel_end - start;
+				start = kernel_end;
 			}
-
-			regions[regions_len] =
-				(memory_region){.start = start, .size = size};
-			++regions_len;
+			if (page_stack == NULL) {
+				page_stack = (uintptr_t *)((uintptr_t)start +
+							   (uintptr_t)size);
+			}
+			bytes_for_stack += size >> 10;
 		}
 
 		entry_addr += entry->size + sizeof(entry->size);
 		entry = (multiboot_memory_map_t *)entry_addr;
 	}
 
-	for (size_t i = 0; i < regions_len; ++i) {
-		size_t pages_len = (regions[i].size >> 12) + 1;
-		// @TODO!!!: align the 'start' to page sizes
-		// @TODO!!!: chuck the last page!
-		regions[i].page_stack =
-			(uintptr_t *)((regions[i].start & (~0xfff)) +
-				      PAGE_SIZE);
-		regions[i].start =
-			(uintptr_t)regions[i].page_stack + (pages_len << 2);
-		regions[i].size -=
-			regions[i].start - (uintptr_t)regions[i].page_stack;
-		regions[i].pages_len = pages_len;
+	page_stack -= bytes_for_stack >> 2;
+	page_stack_top = page_stack;
 
-		for (size_t j = 0; j < pages_len; ++j) {
-			regions[i].page_stack[j] = regions[i].start + (j << 12);
-			/* writef("%x %x\n", regions[i].start + regions[i].size,
-			 * regions[i].page_stack[j]); */
+	entry_addr = (void *)mboot->mmap_addr;
+	entry = (multiboot_memory_map_t *)entry_addr;
+	while ((uintptr_t)entry_addr < mboot->mmap_addr + mboot->mmap_length) {
+		if (entry->type == MULTIBOOT_MEMORY_AVAILABLE &&
+		    entry->addr + entry->len > kernel_end) {
+			uint64_t start = entry->addr;
+			uint64_t size = entry->len;
+			if (start > UINTPTR_MAX) {
+				LOG("Memory cannot be used due to architectural limits\n");
+				break;
+			}
+			if (start < kernel_end) {
+				size -= kernel_end - start;
+				start = kernel_end;
+			}
+
+			// @NOTE: - PAGE_SIZE to throw out less than full pages
+			for (size_t i = start; i < start + size - PAGE_SIZE;
+			     i += PAGE_SIZE) {
+				if (i > (uintptr_t)page_stack - PAGE_SIZE &&
+				    i < (uintptr_t)page_stack +
+						    bytes_for_stack) {
+					break;
+				}
+				*--page_stack = i;
+			}
 		}
 
-		/* writef("Start: %x\nPageStack: %x\nSize: %x\nEnd: " */
-		/*        "%x\nPages_Len: %x\n", */
-		/*        regions[i].start, regions[i].page_stack, */
-		/* regions[i].size, */
-		/*        regions[i].start + regions[i].size, pages_len); */
+		entry_addr += entry->size + sizeof(entry->size);
+		entry = (multiboot_memory_map_t *)entry_addr;
 	}
+	writef("%u Free pages\n", bytes_for_stack >> 2);
+
+	// @TODO!!!: align the page_stack entries to page sizes
+	// @TODO!!!: chuck the last pages of memory regions! (unless perfectly
+	// aligned lol)
 }
 
-// @NOTE: Simple watermark
-void *malloc_physical_page(void) {
-	for (size_t i = 0; i < regions_len; ++i) {
-		if ((uintptr_t)regions[i].page_stack == regions[i].start) {
-			continue;
-		}
-
-		void *page = (void *)*regions[i].page_stack;
-		++regions[i].page_stack;
-		return page;
+void *alloc_physical_page(void) {
+	if (page_stack >= page_stack_top) {
+		LOG("OUT OF MEMORY!\n");
+		return NULL;
 	}
-
-	LOG("Out of Memory!\n");
-	return NULL;
-}
-
-void free_physical_page(void *page) {
+	return (void *)*(page_stack++);
 }
