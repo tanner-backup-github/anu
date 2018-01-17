@@ -21,11 +21,6 @@ int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 	install_idt();
 	install_irqs();
 	init_free_memory(mboot);
-
-	char *x = malloc_page();
-	memset(x, 'a', 4096);
-	x[4095] = '\0';
-	writef("%s\n", x);
 	
 	// @NOTE: I do need this, but why?
 	asm volatile("sti");
