@@ -1,2 +1,2 @@
 clear
-cloc . --exclude-ext=html
+cloc . --exclude-ext=html --by-file

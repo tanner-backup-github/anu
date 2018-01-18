@@ -18,10 +18,7 @@ extern void hang(void);
 
 #define X86
 
-/* typedef size_t uint64_t; */
-
-// @TODO: varargs
-#define __ASSERT(b, file, func, line)                                          \
+#define __ASSERT(b, file, func, line)					\
 	do {                                                                   \
 		if (!(b)) {                                                    \
 			writef("Assertion failed in file %s in function %s "   \
