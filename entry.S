@@ -1,4 +1,4 @@
-MAGIC equ 0x1BADB002
+MAGIC equ 0x1badb002
 FLAGS equ (1 << 0) | (1 << 1) | (1 << 6)
 CHECKSUM equ -(MAGIC + FLAGS)
 
@@ -29,5 +29,5 @@ hang:
 section .bss
 ;; @TODO: doc why 32 bit aligned
 align 32
-resb 8192
+resb 0x2000
 stack:

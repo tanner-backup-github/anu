@@ -16,6 +16,10 @@ typedef struct {
 
 extern void hang(void);
 
+#define X86
+
+/* typedef size_t uint64_t; */
+
 // @TODO: varargs
 #define __ASSERT(b, file, func, line)                                          \
 	do {                                                                   \
@@ -37,11 +41,12 @@ extern void hang(void);
 #define PANIC() __PANIC(__FILE__, __FUNCTION__, __LINE__);
 
 #ifdef DEBUG
-#define __LOG(s, file, func, line)                                             \
+#define __LOG(s, file, func, line, ...)                                        \
 	do {                                                                   \
-		writef("[Log (%s %s %d)]: %s\n", file, func, line, (s));       \
+		writef("[Log (%s %s %d)]: ", file, func, line);                \
+		writef(s "\n", ##__VA_ARGS__);                                 \
 	} while (0);
-#define LOG(s) __LOG(s, __FILE__, __FUNCTION__, __LINE__);
+#define LOG(s, ...) __LOG(s, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
 #else
 #define __LOG(s, file, func, line)
 #define LOG(s)
@@ -98,3 +103,8 @@ void install_irqs(void);
 // memory.c
 void init_free_memory(multiboot_info_t *mboot);
 void *alloc_physical_page(void);
+void free_physical_page(void *addr);
+void dump_page_stack(void);
+
+// tests.c
+void alloc_physical_page_test(void);

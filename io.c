@@ -52,11 +52,23 @@ void writef(const char *fmt, ...) {
 			case 's':
 				write_string(va_arg(vl, char *));
 				break;
+			case 'a':
+#ifdef X86
+				write_string("0x");
+				write_uint(va_arg(vl, uint32_t), 16);
+#else
+				write_string("0x");
+				write_uint(va_arg(vl, uint64_t), 16);
+#endif
+				break;
 			case 'c':
 				write_serial(va_arg(vl, int32_t));
 				break;
 			case 'd':
 				write_int(va_arg(vl, int32_t), 10);
+				break;
+			case 'D':
+				write_int(va_arg(vl, int64_t), 10);
 				break;
 			case 'u':
 				write_uint(va_arg(vl, uint32_t), 10);
