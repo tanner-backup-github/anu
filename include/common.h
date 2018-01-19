@@ -18,7 +18,7 @@ extern void hang(void);
 
 #define X86
 
-#define __ASSERT(b, file, func, line)					\
+#define __ASSERT(b, file, func, line)                                          \
 	do {                                                                   \
 		if (!(b)) {                                                    \
 			writef("Assertion failed in file %s in function %s "   \
@@ -73,7 +73,7 @@ void memcpy(void *dest, const void *src, size_t n);
 
 #define DATA_SELECTOR 0x08
 
-#define PRESENT 0b10000000
+#define DESCRIPTOR_PRESENT 0b10000000
 #define DPL_KERNEL 0b00000000
 #define DPL_USER 0b01100000
 #define INT_TRAP_STORAGE_SEGMENT 0b00000000
@@ -85,7 +85,8 @@ void memcpy(void *dest, const void *src, size_t n);
 #define TRAP_GATE_32BIT 0b00001111
 
 #define INT_GATE_FLAGS                                                         \
-	PRESENT | DPL_KERNEL | INT_TRAP_STORAGE_SEGMENT | INT_GATE_32BIT
+	DESCRIPTOR_PRESENT | DPL_KERNEL | INT_TRAP_STORAGE_SEGMENT |           \
+		INT_GATE_32BIT
 
 // gdt.c
 void install_gdt(void);
@@ -102,6 +103,15 @@ void init_free_memory(multiboot_info_t *mboot);
 void *alloc_physical_page(void);
 void free_physical_page(void *addr);
 void dump_page_stack(void);
+
+// paging.c
+void enable_paging(void);
+
+// cr_util.S
+uint32_t read_cr0(void);
+void write_cr0(uint32_t cr0);
+uint32_t read_cr3(void);
+void write_cr3(uint32_t cr3);
 
 // tests.c
 void alloc_physical_page_test(void);

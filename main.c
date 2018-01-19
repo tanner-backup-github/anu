@@ -11,21 +11,21 @@ int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 
 	// Copy mboot?
 
-	// @TODO: Higher half kernel
-
-	// @TODO: format string for arch dependent types
+	// @TODO: Higher half kernel	
+	
+	uint16_t *real_shit = (uint16_t *)0xc00b8000;
+	*real_shit = 'A' | 1 << 8;
 	
 	enable_serial();
-
+	
 	ASSERT(magic == MULTIBOOT_BOOTLOADER_MAGIC);
 
 	install_gdt();
 	install_idt();
 	install_irqs();
 	init_free_memory(mboot);
-	
-	/* alloc_physical_page_test(); */
-	
+        /* enable_paging(); */
+
 	asm volatile("sti");
 	/* asm volatile("int $0x50"); */
 

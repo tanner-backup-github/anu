@@ -1,7 +1,8 @@
 #include <common.h>
 
-extern char __kernel_end;
-uintptr_t kernel_end = (uintptr_t)&__kernel_end;
+extern char __kernel_phys_end;
+extern char __kernel_virt_end;
+uintptr_t kernel_end = (uintptr_t)&__kernel_phys_end;
 
 // http://wiki.osdev.org/Memory_Map_(x86)#.22Upper.22_Memory_.28.3E_1_MiB.29
 
@@ -18,16 +19,18 @@ void init_free_memory(multiboot_info_t *mboot) {
 
 	size_t bytes_for_stack = 0;
 
-#define TRAVERSE_MAP(work)                                                     \
+	mboot->mmap_addr += 0xc0000000;
+
+#define TRAVERSE_MMAP(work)                                                    \
 	{                                                                      \
-		void *entry_addr = (void *)mboot->mmap_addr;                   \
+		void *entry_addr = (void *)(mboot->mmap_addr);                 \
 		multiboot_memory_map_t *entry =                                \
-			(multiboot_memory_map_t *)entry_addr;                  \
+			(multiboot_memory_map_t *)(entry_addr);                \
+		uint64_t start = entry->addr + 0xc0000000;                     \
 		while ((uintptr_t)entry_addr <                                 \
 		       mboot->mmap_addr + mboot->mmap_length) {                \
 			if (entry->type == MULTIBOOT_MEMORY_AVAILABLE &&       \
-			    entry->addr + entry->len > kernel_end) {           \
-				uint64_t start = entry->addr;                  \
+			    start + entry->len > kernel_end) {                 \
 				uint64_t size = entry->len;                    \
 				if (start > UINTPTR_MAX) {                     \
 					LOG("Memory which cannot be used due " \
@@ -46,7 +49,7 @@ void init_free_memory(multiboot_info_t *mboot) {
 		}                                                              \
 	}
 
-	TRAVERSE_MAP({
+	TRAVERSE_MMAP({
 		if (page_stack == NULL) {
 			page_stack = (uintptr_t *)((uintptr_t)start +
 						   (uintptr_t)size);
@@ -60,7 +63,7 @@ void init_free_memory(multiboot_info_t *mboot) {
 	page_stack -= bytes_for_stack >> 2;
 	page_stack_top = page_stack;
 
-	TRAVERSE_MAP({
+	TRAVERSE_MMAP({
 		// @NOTE: - PAGE_SIZE to throw out less than full pages
 		for (size_t i = start; i < start + size - PAGE_SIZE;
 		     i += PAGE_SIZE) {
@@ -84,16 +87,14 @@ void *alloc_physical_page(void) {
 		LOG("OUT OF MEMORY!\n");
 		return NULL;
 	}
-	return (void *)*(page_stack++);
+	return (void *)*(--page_stack_top);
 }
 
-void free_physical_page(void *addr) {
-	*page_stack_top++ = (uintptr_t)addr;
-}
+void free_physical_page(void *addr) { *--page_stack = (uintptr_t)addr; }
 
 void dump_page_stack(void) {
 	writef("====\tPage Stack\t====\n");
-	for (uintptr_t *p = page_stack_top - 1; p >= page_stack; --p) {
+	for (uintptr_t *p = page_stack; p < page_stack_top; ++p) {
 		writef("%x\n", *p);
 	}
 	writef("====\tEnd Page Stack\t====\n");

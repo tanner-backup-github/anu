@@ -35,18 +35,21 @@ struct {
 	uint16_t size;
 	uint32_t offset;
 } __attribute__((packed)) gdt_basep = {
-	sizeof(gdt) - 1, (uint32_t)&gdt,
+	sizeof(gdt) - 1,
+	(uint32_t)&gdt,
 };
 
 extern void flush_gdt(void);
 
 // access flags
-// @NOTE: Present defined in common.h as 0b10000000
+// @NOTE: DESCRIPTOR_PRESENT defined in common.h as 0b10000000
 #define DPL_KERNEL 0b00000000
 #define DPL_USER 0b01100000
 #define MANDATORY_ONE 0b00010000
 #define GDT_EXEC_SELECTOR 0b00001000
-#define GDT_DATA_SELECTOR 0b00000000 // @NOTE: GDT_* because conflicted with common.h DATA_SELECTOR
+#define GDT_DATA_SELECTOR                                                      \
+	0b00000000 // @NOTE: GDT_* because conflicted with common.h
+		   // DATA_SELECTOR
 #define DATA_GROWS_UP 0b00000000
 #define DATA_GROWNS_DOWN 0b00000100
 #define CODE_EXEC_LOWER 0b00000100
@@ -62,11 +65,11 @@ extern void flush_gdt(void);
 #define SIZE_PROT_32BIT 0b0100
 
 #define CODE_ACCESS_FLAGS                                                      \
-	PRESENT | DPL_KERNEL | MANDATORY_ONE | GDT_EXEC_SELECTOR |             \
+	DESCRIPTOR_PRESENT | DPL_KERNEL | MANDATORY_ONE | GDT_EXEC_SELECTOR |  \
 		CODE_EXEC_EXACT | DATA_CODE_WR | NOT_ACCESSED
 #define DATA_ACCESS_FLAGS                                                      \
-	PRESENT | DPL_KERNEL | MANDATORY_ONE | GDT_DATA_SELECTOR | DATA_GROWS_UP | \
-		DATA_CODE_WR | NOT_ACCESSED
+	DESCRIPTOR_PRESENT | DPL_KERNEL | MANDATORY_ONE | GDT_DATA_SELECTOR |  \
+		DATA_GROWS_UP | DATA_CODE_WR | NOT_ACCESSED
 #define BOTH_SIZE_FLAGS PAGE_GRANULARITY | SIZE_PROT_32BIT
 
 void set_gdt_entry(size_t i, uint32_t offset, uint32_t size,
