@@ -1,7 +1,13 @@
-#include <common.h>
+#include "irq.h"
+#include "idt.h"
+#include "name_better.h"
+#include "port.h"
+#include "universe.h"
+#include <stddef.h>
+#include <stdint.h>
 
 void *irq_routines[16] = {NULL};
-typedef void (* irq_routine)(registers *regs);
+typedef void (*irq_routine)(registers *regs);
 
 // IO ports
 #define MASTER_PIC_COMMAND 0x20
@@ -42,7 +48,7 @@ uint64_t timer_ticks = 0;
 void timer_handler(registers *regs) {
 	(void)regs;
 	++timer_ticks;
-	
+
 	// 55 ms of precision (% 18 = one sec boundary)
 	if (timer_ticks % 36 == 0) {
 		writef("0");
@@ -52,7 +58,7 @@ void timer_handler(registers *regs) {
 void keyboard_handler(registers *regs) {
 	(void)regs;
 	uint8_t scancode = inb(KEYBOARD_DATA);
-	
+
 	if (!(scancode & 0b10000000) && US_KEYBOARD[scancode]) {
 		writef("%c", US_KEYBOARD[scancode]);
 	}
@@ -102,9 +108,10 @@ void install_irqs(void) {
 	set_idt_entry(45, (uint32_t)irq13, DATA_SELECTOR, INT_GATE_FLAGS);
 	set_idt_entry(46, (uint32_t)irq14, DATA_SELECTOR, INT_GATE_FLAGS);
 	set_idt_entry(47, (uint32_t)irq15, DATA_SELECTOR, INT_GATE_FLAGS);
-	/* set_idt_entry(0x50, (uint32_t)test, DATA_SELECTOR, INT_GATE_FLAGS); */
-	
-        irq_routines[0] = timer_handler;
+	/* set_idt_entry(0x50, (uint32_t)test, DATA_SELECTOR, INT_GATE_FLAGS);
+	 */
+
+	irq_routines[0] = timer_handler;
 	irq_routines[1] = keyboard_handler;
 }
 
@@ -112,7 +119,7 @@ void irq_handler(registers *regs) {
 	irq_routine routine = irq_routines[regs->int_no - 32];
 
 	if (routine) {
-	        routine(regs);
+		routine(regs);
 	}
 
 	if (regs->int_no >= 40) {

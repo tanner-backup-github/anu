@@ -1,4 +1,7 @@
-#include <common.h>
+#include <stdint.h>
+#include <stddef.h>
+#include "gdt.h"
+#include "name_better.h"
 
 /*
    @NOTE: GDT Entry

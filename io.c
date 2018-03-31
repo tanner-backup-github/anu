@@ -1,4 +1,7 @@
-#include <common.h>
+#include "io.h"
+#include "serial.h"
+#include "string.h"
+#include <stddef.h>
 
 void write_string(const char *s) {
 	for (size_t i = 0; s[i] != '\0'; ++i) {

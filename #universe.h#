@@ -1,12 +1,10 @@
 #pragma once
 
-#include <multiboot.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stddef.h>
 #include <stdint.h>
+#include "io.h"
 
-// @NOTE: esp useless?
+// @TODO: Clean
+
 typedef struct {
 	uint32_t gs, fs, es, ds;
 	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
@@ -52,54 +50,3 @@ extern void hang(void);
 #define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof(*(arr)))
 #define MIN(x, y) ((x) > (y) ? (y) : (x))
 #define MAX(x, y) ((x) < (y) ? (y) : (x))
-
-// port.c
-void outb(uint16_t port, uint8_t value);
-uint8_t inb(uint16_t port);
-
-// serial.c
-void enable_serial(void);
-uint8_t read_serial(void);
-void write_serial(uint8_t b);
-
-// io.c
-// @NOTE: supports: 's', 'c', 'd', 'u', 'U', 'x', 'X', and 'b'
-void writef(const char *fmt, ...);
-
-// string.c
-size_t strlen(const char *s);
-void memset(const void *b, uint8_t c, size_t n);
-void memcpy(void *dest, const void *src, size_t n);
-
-#define DATA_SELECTOR 0x08
-
-#define DESCRIPTOR_PRESENT 0b10000000
-#define DPL_KERNEL 0b00000000
-#define DPL_USER 0b01100000
-#define INT_TRAP_STORAGE_SEGMENT 0b00000000
-#define TASK_STORAGE_SEGMENT 0b00001000
-
-// @NOTE: there are 16-bit gates too
-#define TASK_GATE_32BIT 0b00000101
-#define INT_GATE_32BIT 0b00001110
-#define TRAP_GATE_32BIT 0b00001111
-
-#define INT_GATE_FLAGS                                                         \
-	DESCRIPTOR_PRESENT | DPL_KERNEL | INT_TRAP_STORAGE_SEGMENT |           \
-		INT_GATE_32BIT
-
-// gdt.c
-void install_gdt(void);
-
-// idt.c
-void install_idt(void);
-void set_idt_entry(size_t i, uint32_t offset, uint16_t selector, uint8_t flags);
-
-// irq.c
-void install_irqs(void);
-
-// cr_util.S
-uint32_t read_cr0(void);
-void write_cr0(uint32_t cr0);
-uint32_t read_cr3(void);
-void write_cr3(uint32_t cr3);

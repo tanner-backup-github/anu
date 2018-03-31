@@ -1,4 +1,6 @@
-#include <common.h>
+#include "serial.h"
+#include "port.h"
+#include <stdbool.h>
 
 // https://www.lammertbies.nl/comm/info/serial-uart.html
 // http://wiki.osdev.org/Serial_Ports

@@ -1,4 +1,5 @@
-#include <common.h>
+#include "idt.h"
+#include "name_better.h"
 
 /*
   @NOTE: IDT Entry

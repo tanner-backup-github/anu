@@ -1,4 +1,6 @@
-#include <common.h>
+#include "universe.h"
+#include <stddef.h>
+#include <stdint.h>
 
 const char *const isr_exceptions[] = {
 	"Division By Zero",
