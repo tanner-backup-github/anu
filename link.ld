@@ -20,4 +20,6 @@ SECTIONS {
 		*(.bss)
 	}
 
+	__kernel_end = ALIGN(4K);
+	
 }

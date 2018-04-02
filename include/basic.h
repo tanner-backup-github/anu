@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdint.h>
 #include "io.h"
+#include <stdint.h>
 
 typedef struct {
 	uint32_t gs, fs, es, ds;
@@ -11,6 +11,10 @@ typedef struct {
 } registers;
 
 extern void hang(void);
+
+#define ARRAY_SIZE(a) ((sizeof(a)) / sizeof(*(a)))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
 #define X86
 
@@ -44,7 +48,3 @@ extern void hang(void);
 #define __LOG(s, file, func, line)
 #define LOG(s)
 #endif
-
-#define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof(*(arr)))
-#define MIN(x, y) ((x) > (y) ? (y) : (x))
-#define MAX(x, y) ((x) < (y) ? (y) : (x))

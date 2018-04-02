@@ -1,21 +1,17 @@
 #include "irq.h"
+#include "basic.h"
+#include "gates.h"
 #include "idt.h"
-#include "name_better.h"
 #include "port.h"
-#include "universe.h"
 #include <stddef.h>
 #include <stdint.h>
 
+// https://en.wikipedia.org/wiki/Intel_8259
+// https://pdos.csail.mit.edu/6.828/2014/readings/hardware/8259A.pdf
+// https://wiki.osdev.org/8259_PIC
+
 void *irq_routines[16] = {NULL};
 typedef void (*irq_routine)(registers *regs);
-
-// IO ports
-#define MASTER_PIC_COMMAND 0x20
-#define MASTER_PIC_DATA 0x21
-#define SLAVE_PIC_COMMAND 0xA0
-#define SLAVE_PIC_DATA 0xA1
-#define PIC_EOI 0x20
-#define KEYBOARD_DATA 0x60
 
 const uint8_t US_KEYBOARD[128] = {
 	0,   27,   '1',  '2', '3',  '4', '5', '6', '7', '8', '9', '0', '-',
@@ -49,11 +45,23 @@ void timer_handler(registers *regs) {
 	(void)regs;
 	++timer_ticks;
 
-	// 55 ms of precision (% 18 = one sec boundary)
-	if (timer_ticks % 36 == 0) {
-		writef("0");
+	/* @NOTE: 55 ms of precision (% 18 = one sec boundary) */
+	if (timer_ticks % 18 == 0) {
+		/* writef("0"); */
 	}
 }
+
+// IO ports
+#define MASTER_PIC_COMMAND 0x20
+#define MASTER_PIC_DATA 0x21
+#define SLAVE_PIC_COMMAND 0xA0
+#define SLAVE_PIC_DATA 0xA1
+#define PIC_EOI 0x20
+
+#define KEYBOARD_DATA 0x60
+
+#define MASTER_OFFSET 32
+#define SLAVE_OFFSET 40
 
 void keyboard_handler(registers *regs) {
 	(void)regs;
@@ -65,30 +73,31 @@ void keyboard_handler(registers *regs) {
 }
 
 void install_irqs(void) {
-	const uint8_t MASTER_OFFSET = 32;
-	const uint8_t SLAVE_OFFSET = 40;
-
-	// @NOTE: remap the PIC because in protected mode things overlapIRQ
-	// (0-7 are mapped to IDT 8-15 which corresponds to double fault) bad
+	// @NOTE: remap the PIC because in protected mode things overlap
+	// IRQ (0-7 are mapped to IDT 8-15 which corresponds to double fault)
 
 	// @NOTE: Master pic for IRQ0-IRQ7
 	// @NOTE: Slave pic for IRQ8-IRQ15
 	// @NOTE: ICW = Initialization Command Words
 	// @NOTE: Technically waits should be here?
 
-	// 0x10 + 0x01 = initialization + ICW4 (command right after 8086 mode
+	// ICW1
+	// 0x10 + 0x01 = init + ICW4 (command right after 8086 mode
 	// command) not needed (used to be outb(MASTER&SLAVE_DATA, 0);
 	outb(MASTER_PIC_COMMAND, 0x11);
 	outb(SLAVE_PIC_COMMAND, 0x11);
 
+	// ICW2
 	outb(MASTER_PIC_DATA, MASTER_OFFSET);
 	outb(SLAVE_PIC_DATA, SLAVE_OFFSET);
 
+	// ICW3
 	// tells the master pic that there's a slave pic on IRQ2
 	outb(MASTER_PIC_DATA, 4);
-	// tells the slave pic it's identity (IRQ2)
+	// tells the slave pic its cascade identity
 	outb(SLAVE_PIC_DATA, 2);
 
+	// ICW4
 	outb(MASTER_PIC_DATA, 1); // 8086 mode
 	outb(SLAVE_PIC_DATA, 1);  // 8086 mode
 

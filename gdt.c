@@ -1,7 +1,9 @@
-#include <stdint.h>
-#include <stddef.h>
 #include "gdt.h"
-#include "name_better.h"
+#include "gates.h"
+#include <stddef.h>
+#include <stdint.h>
+
+// https://wiki.osdev.org/GDT
 
 /*
    @NOTE: GDT Entry
@@ -45,14 +47,14 @@ struct {
 extern void flush_gdt(void);
 
 // access flags
-// @NOTE: DESCRIPTOR_PRESENT defined in common.h as 0b10000000
 #define DPL_KERNEL 0b00000000
 #define DPL_USER 0b01100000
 #define MANDATORY_ONE 0b00010000
 #define GDT_EXEC_SELECTOR 0b00001000
 #define GDT_DATA_SELECTOR                                                      \
-	0b00000000 // @NOTE: GDT_* because conflicted with common.h
-		   // DATA_SELECTOR
+	0b00000000 // @NOTE: GDT_* because conflicted with gates.h
+
+// DATA_SELECTOR
 #define DATA_GROWS_UP 0b00000000
 #define DATA_GROWNS_DOWN 0b00000100
 #define CODE_EXEC_LOWER 0b00000100

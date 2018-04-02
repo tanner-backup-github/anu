@@ -1,6 +1,6 @@
 #pragma once
 
-// @TODO: Clean
+// https://wiki.osdev.org/Descriptor
 
 #define DATA_SELECTOR 0x08
 

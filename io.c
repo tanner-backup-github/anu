@@ -1,6 +1,7 @@
 #include "io.h"
 #include "serial.h"
 #include "string.h"
+#include "basic.h"
 #include <stddef.h>
 
 void write_string(const char *s) {

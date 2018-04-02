@@ -1,6 +1,9 @@
-#include "universe.h"
+#include "basic.h"
 #include <stddef.h>
 #include <stdint.h>
+
+// https://wiki.osdev.org/Exceptions
+// https://wiki.osdev.org/Interrupt_Service_Routines
 
 const char *const isr_exceptions[] = {
 	"Division By Zero",

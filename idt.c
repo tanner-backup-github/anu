@@ -1,5 +1,7 @@
 #include "idt.h"
-#include "name_better.h"
+#include "gates.h"
+
+// https://wiki.osdev.org/Interrupt_Descriptor_Table
 
 /*
   @NOTE: IDT Entry
