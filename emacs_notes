@@ -1,0 +1,5 @@
+// @NOTE: M-% query-replace
+// @NOTE: M-z zap to char
+// @NOTE: dired g refresh buffer
+// @NOTE: buf-move
+// @NOTE: goto line M-g g

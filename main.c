@@ -8,13 +8,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// @NOTE: M-% query-replace
-// @NOTE: M-z zap to char
-// @NOTE: dired g refresh buffer
-// @NOTE: the new negative compliant writef hasn't been tested much yet.
-// @NOTE: buf-move
-// @NOTE: goto line M-g g
-
 extern const char __kernel_end;
 const uintptr_t kernel_end = (uintptr_t)&__kernel_end;
 
