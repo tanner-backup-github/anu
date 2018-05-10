@@ -11,10 +11,10 @@
 
 // @TODO: Higher half kernel. Memory protection
 // @TODO: Find PIC documentation for saved_info (Good?)
-// @TODO: Rewrite all bash scripts in fish
+// @TODO: Commit at end of class
 
 int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
-
+	
 	enable_serial();
 
 	ASSERT(magic == MULTIBOOT_BOOTLOADER_MAGIC);

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ ${#@} -lt 3 ]
 then
     echo "Supply at least three arguments"
