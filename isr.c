@@ -48,14 +48,15 @@ char *register_names[] = {
 
 void isr_handler(registers *regs) {
 	if (regs->int_no < 32) {
-		writef("%s Exception!\nDumping registers and halting.\n",
+		printf("%s Exception!\nDumping registers and halting.\n",
 		       isr_exceptions[regs->int_no]);
 		for (size_t i = 0; i < ARRAY_SIZE(register_names); ++i) {
-			writef("%s: %x\n", register_names[i],
+			printf("%s: %x\n", register_names[i],
 			       *((int32_t *)regs + i));
 		}
 		hang();
 	} else {
-		writef("TEST\n");
+		// @TODO: What?
+		printf("TEST\n");
 	}
 }

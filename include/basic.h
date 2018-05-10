@@ -21,7 +21,7 @@ extern void hang(void);
 #define __ASSERT(b, file, func, line)                                          \
 	do {                                                                   \
 		if (!(b)) {                                                    \
-			writef("Assertion failed in file %s in function %s "   \
+			printf("Assertion failed in file %s in function %s "   \
 			       "on line %d.\n",                                \
 			       file, func, line);                              \
 			hang();                                                \
@@ -31,7 +31,7 @@ extern void hang(void);
 
 #define __PANIC(file, func, line)                                              \
 	do {                                                                   \
-		writef("Panic in file %s in function %s on line %d.\n", file,  \
+		printf("Panic in file %s in function %s on line %d.\n", file,  \
 		       func, line);                                            \
 		hang();                                                        \
 	} while (0);
@@ -40,8 +40,8 @@ extern void hang(void);
 #ifdef DEBUG
 #define __LOG(s, file, func, line, ...)                                        \
 	do {                                                                   \
-		writef("[Log (%s %s %d)]: ", file, func, line);                \
-		writef(s "\n", ##__VA_ARGS__);                                 \
+		printf("[Log (%s %s %d)]: ", file, func, line);                \
+		printf(s "\n", ##__VA_ARGS__);                                 \
 	} while (0);
 #define LOG(s, ...) __LOG(s, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
 #else

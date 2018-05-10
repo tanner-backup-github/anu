@@ -47,7 +47,7 @@ void timer_handler(registers *regs) {
 
 	/* @NOTE: 55 ms of precision (% 18 = one sec boundary) */
 	if (timer_ticks % 18 == 0) {
-		/* writef("0"); */
+		/* printf("0"); */
 	}
 }
 
@@ -68,7 +68,7 @@ void keyboard_handler(registers *regs) {
 	uint8_t scancode = inb(KEYBOARD_DATA);
 
 	if (!(scancode & 0b10000000) && US_KEYBOARD[scancode]) {
-		writef("%c", US_KEYBOARD[scancode]);
+		printf("%c", US_KEYBOARD[scancode]);
 	}
 }
 

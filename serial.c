@@ -58,7 +58,7 @@ uint8_t read_serial(void) {
 
 bool transmit_empty(void) { return inb(LINE_STATUS) & STATUS_CHANGE; }
 
-void write_serial(uint8_t b) {
+void print_serial(uint8_t b) {
 	while (transmit_empty() == false) {
 	}
 
