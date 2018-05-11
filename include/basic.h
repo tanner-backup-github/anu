@@ -11,6 +11,19 @@ typedef struct {
 } registers;
 
 extern void hang(void);
+#define ROUND_TO(v, t) (((v) + ((t) - 1)) & ~((v) - 1))
+#define CHECK_BIT(i, b) ((i) & (1 << (b)))
+#define SET_BIT(i, b) ((i) |= (1 << (b)));
+static inline uint32_t to_pow2(uint32_t v) {
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	v++;
+	return v;
+}
 
 #define ARRAY_SIZE(a) ((sizeof(a)) / sizeof(*(a)))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))

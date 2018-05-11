@@ -28,6 +28,13 @@ int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 
 	printf("Entering loop...\n");
 
+	void *l = NULL;
+	while (true) {
+		void *p = malloc_phys_page();
+		ASSERT((p == l + 4096) | !l);
+		l = p;
+	}
+	
 	while (true) {
 		asm volatile("hlt");
 	}
