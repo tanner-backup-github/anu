@@ -11,7 +11,8 @@
 
 // @TODO: Higher half kernel. Memory protection
 // @TODO: Find PIC documentation for saved_info (Good?)
-// @TODO: Commit at end of class
+// @TODO: VGA terminal
+// @TODO: Clean out some notes?
 
 int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 	
@@ -28,11 +29,9 @@ int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 
 	printf("Entering loop...\n");
 
-	void *l = NULL;
 	while (true) {
 		void *p = malloc_phys_page();
-		ASSERT((p == l + 4096) | !l);
-		l = p;
+		(void)p;
 	}
 	
 	while (true) {

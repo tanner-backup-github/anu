@@ -53,7 +53,7 @@ static inline uint32_t to_pow2(uint32_t v) {
 #ifdef DEBUG
 #define __LOG(s, file, func, line, ...)                                        \
 	do {                                                                   \
-		printf("[Log (%s %s %d)]: ", file, func, line);                \
+		printf("[LOG (%s %s %d)]: ", file, func, line);                \
 		printf(s "\n", ##__VA_ARGS__);                                 \
 	} while (0);
 #define LOG(s, ...) __LOG(s, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
