@@ -4,11 +4,12 @@ cd "$BASE"
 
 for i in *.*; do
     [ -f "$i" ] || break
+    
     without_extension="${i%%.*}"
     if [[ "$i" == *.S ]]; then
 	nasm -felf32 "$i" -o "$BASE/obuild/$without_extension.o"
     elif [[ "$i" == *.c ]]; then
-        ~/Desktop/i686-elf-4.9.1-Linux-x86_64/bin/i686-elf-gcc -D"$1" -g -c "$i" -o "$BASE/obuild/"$without_extension".o" -I"$BASE/include" -std=gnu99 -ffreestanding -O0 -g -Wall -Wextra
+        ~/Desktop/i686-elf-4.9.1-Linux-x86_64/bin/i686-elf-gcc -D"$1" -g -c "$i" -o "$BASE/obuild/"$without_extension".o" -I"$BASE/include" -std=gnu99 -ffreestanding -O0 -Wall -Wextra
     fi
 done
 

@@ -14,6 +14,7 @@ extern void hang(void);
 #define ROUND_TO(v, t) (((v) + ((t) - 1)) & ~((v) - 1))
 #define CHECK_BIT(i, b) ((i) & (1 << (b)))
 #define SET_BIT(i, b) ((i) |= (1 << (b)));
+#define UNSET_BIT(i, b) ((i) &= ~(1 << (b)));
 static inline uint32_t to_pow2(uint32_t v) {
 	v--;
 	v |= v >> 1;

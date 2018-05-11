@@ -98,3 +98,40 @@ void *malloc_phys_page(void) {
 	PANIC();
 	return NULL;
 }
+
+void free_phys_page(void *addr) {
+	uint32_t *const bitmap = valid_mem.bitmap;
+	const size_t bitmap_len = valid_mem.bitmap_len;
+
+	for (size_t i = 0; i < bitmap_len; ++i) {
+		if (bitmap[i] == 0) {
+			continue;
+		}
+
+		for (size_t j = 0; j < sizeof(*bitmap) * 8; ++j) {
+			if ((void *)(uintptr_t)(valid_mem.start +
+						(i * PAGE_SIZE * 32) +
+						(j * PAGE_SIZE)) == addr) {
+				UNSET_BIT(bitmap[i], j);
+			}
+		}
+	}
+	// @TODO: Panic freeing unalloacted memory.
+}
+
+void print_allocator_bitmap(void) {
+	uint32_t *const bitmap = valid_mem.bitmap;
+	const size_t bitmap_len = valid_mem.bitmap_len;
+
+	bool only_zeros = true;
+	for (int i = bitmap_len - 1; i >= 0; --i) {
+		uint32_t b = bitmap[i];
+		if (only_zeros && !b) {
+			continue;
+		}
+		only_zeros = !only_zeros ? b != 0 : false;
+		printf("(%X-%X): %b\n", valid_mem.start + (i * PAGE_SIZE * 32),
+		       valid_mem.start + (i * PAGE_SIZE * 32) + 32 * PAGE_SIZE,
+		       b);
+	}
+}

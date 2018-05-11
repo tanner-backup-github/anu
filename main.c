@@ -15,7 +15,7 @@
 // @TODO: Clean out some notes?
 
 int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
-	
+
 	enable_serial();
 
 	ASSERT(magic == MULTIBOOT_BOOTLOADER_MAGIC);
@@ -29,11 +29,12 @@ int32_t kmain(uint32_t magic, multiboot_info_t *mboot) {
 
 	printf("Entering loop...\n");
 
-	while (true) {
-		void *p = malloc_phys_page();
-		(void)p;
+	for (size_t i = 0; i < 40; ++i) {
+		malloc_phys_page();
 	}
-	
+	free_phys_page((void *)0x100000 + (0x1000 * 39));
+	print_allocator_bitmap();
+
 	while (true) {
 		asm volatile("hlt");
 	}
